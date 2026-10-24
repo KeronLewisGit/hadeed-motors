@@ -36,7 +36,7 @@
                             <p class="num">{{ $l->created_at->format('j M, H:i') }}</p>
                             @if ($l->isOverdue())<p class="chip mt-1 num" data-tone="critical"><x-icon name="clock" />{{ $l->created_at->diffForHumans(null, true, true) }} waiting</p>@endif
                         </td>
-                        <td><a href="{{ route('admin.leads.show', $l) }}" class="font-semibold underline-offset-2 hover:underline after:absolute after:inset-0">{{ $l->name }}</a><p class="num text-sm text-ink-3">{{ $l->reference }} · {{ format_phone($l->phone) }}</p></td>
+                        <td><a href="{{ route('admin.leads.show', $l) }}" class="whitespace-nowrap font-semibold underline-offset-2 hover:underline after:absolute after:inset-0">{{ $l->name }}</a><p class="num whitespace-nowrap text-sm text-ink-3">{{ $l->reference }}<br>{{ format_phone($l->phone) }}</p></td>
                         <td class="whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><x-icon :name="$l->type->icon()" class="h-4 w-4 text-ink-3" />{{ $l->type->label() }}</span></td>
                         <td class="max-w-56 truncate">{{ $l->subject() ?? '—' }}</td>
                         <td class="num whitespace-nowrap">{{ $l->appointment_date ? $l->appointment_date->format('D j M').' '.$l->appointment_time : '—' }}</td>
