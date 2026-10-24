@@ -6,6 +6,7 @@ use App\Enums\Condition;
 use App\Enums\VehicleStatus;
 use App\Models\Setting;
 use App\Models\Vehicle;
+use App\Support\Hours;
 use App\Support\LoanEstimator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -139,5 +140,56 @@ class PublicSiteTest extends TestCase
     public function test_security_headers_are_sent(): void
     {
         $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+    }
+
+    public function test_dotted_model_keys_cannot_reach_inside_a_model(): void
+    {
+        // These used to 500: the key was read as a config path, landing on a model's "brand" or "trims".
+        $this->get('/index.html?page=vehicle&model=jimny.brand')->assertRedirect('/')->assertStatus(301);
+        $this->get('/index.html?page=vehicle&model=jimny.trims')->assertRedirect('/');
+        $this->get('/new/suzuki/jimny.trims')->assertNotFound();
+        $this->get('/new/suzuki/jimny.specs')->assertNotFound();
+    }
+
+    public function test_array_query_values_do_not_break_the_forms(): void
+    {
+        foreach (['/trade-in?interest[]=x', '/finance/apply?interest[]=x', '/test-drive?model[]=x&vehicle[]=y', '/contact?topic[]=x', '/pre-owned?sort[]=x&make[]=y'] as $url) {
+            $this->get($url)->assertOk();
+        }
+    }
+
+    public function test_estimator_reads_typed_amounts_the_way_the_browser_does(): void
+    {
+        $this->assertSame(65000, amount_input('65,000.00'));
+        $this->assertSame(65000, amount_input('EC$65000.99'));
+        $this->assertSame(0, amount_input('1.2.3'));
+        $this->assertSame(0, amount_input(['65000']));
+        $this->assertSame(5_000_000, amount_input('99999999'));
+
+        Setting::put('finance_indicative_rate', '9');
+        $this->get('/finance?price=65000.00&deposit=15,000&term=60')->assertSee('Borrowing EC$50,000 over 60 months');
+
+        $js = (string) file_get_contents(base_path('resources/js/app.js'));
+        $this->assertStringContainsString("Math.min(5000000, Math.max(0, Math.floor(Number(String(v).replace(/[^0-9.]/g, ''))", $js);
+    }
+
+    public function test_opening_hours_are_worded_from_one_config_entry(): void
+    {
+        $this->assertSame([
+            'Monday to Thursday' => '8am – 5pm',
+            'Friday' => '8am – 4pm',
+            'Saturday, Sunday and public holidays' => 'Closed',
+        ], Hours::rows());
+        $this->assertSame('Monday to Thursday 8am to 5pm, Friday 8am to 4pm', Hours::summary());
+        $this->assertSame('Mon–Thu 8am–5pm, Fri 8am–4pm', Hours::summary(true));
+        $this->assertSame('5:30pm', Hours::time('17:30'));
+
+        config(['hadeed.opening.5' => ['08:00', '15:30']]);
+        $this->get('/contact')->assertSee('8am – 3:30pm')->assertSee('"closes":"15:30"', false);
+    }
+
+    public function test_footer_does_not_double_the_full_stop(): void
+    {
+        $this->get('/')->assertSee('Hadeed Motors Ltd. Nissan and Suzuki')->assertDontSee('Ltd..');
     }
 }

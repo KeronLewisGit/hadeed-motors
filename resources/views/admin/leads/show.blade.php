@@ -22,8 +22,8 @@
 @endphp
 <x-layouts.admin :title="$lead->name">
     <x-slot:actions>
-        @if ($neighbours['prev'])<a href="{{ route('admin.leads.show', $neighbours['prev']) }}" class="a-btn a-btn-ghost" aria-label="Newer lead"><x-icon name="chevron-left" class="h-4 w-4" /></a>@endif
-        @if ($neighbours['next'])<a href="{{ route('admin.leads.show', $neighbours['next']) }}" class="a-btn a-btn-ghost" aria-label="Older lead"><x-icon name="chevron-right" class="h-4 w-4" /></a>@endif
+        @if ($neighbours['prev'])<a href="{{ route('admin.leads.show', $neighbours['prev']) }}" class="a-btn a-btn-ghost" aria-label="Previous lead in the inbox"><x-icon name="chevron-left" class="h-4 w-4" /></a>@endif
+        @if ($neighbours['next'])<a href="{{ route('admin.leads.show', $neighbours['next']) }}" class="a-btn a-btn-ghost" aria-label="Next lead in the inbox"><x-icon name="chevron-right" class="h-4 w-4" /></a>@endif
         <a href="{{ route('admin.leads.index') }}" class="a-btn a-btn-ghost">Back to inbox</a>
     </x-slot:actions>
 
@@ -78,11 +78,11 @@
                     <h2 id="fin-title" class="flex items-center gap-2 font-semibold"><x-icon name="lock" class="h-4 w-4 text-ink-3" />Finance details</h2>
                     @if ($canSeeFinance)
                         <x-spec class="mt-3 max-w-xl" :rows="[
-                            'Residency' => ['citizen' => 'Citizen', 'resident' => 'Permanent resident', 'work_permit' => 'Work permit'][$d['residency'] ?? ''] ?? null,
-                            'Employment' => ucfirst(str_replace('_', '-', $d['employment'] ?? '')),
+                            'Residency' => hadeed('finance.residency.'.($d['residency'] ?? '')),
+                            'Employment' => hadeed('finance.employment.'.($d['employment'] ?? '')),
                             'Employer' => $d['employer'] ?? null,
                             'Job title' => $d['job_title'] ?? null,
-                            'Time in job' => ['u1' => 'Under 1 year', '1_3' => '1–3 years', '3_5' => '3–5 years', 'o5' => 'Over 5 years'][$d['years_employed'] ?? ''] ?? null,
+                            'Time in job' => hadeed('finance.years_employed.'.($d['years_employed'] ?? '')),
                             'Monthly income' => hadeed('finance.income_bands.'.($d['income_band'] ?? '')),
                             'Deposit' => isset($d['deposit']) ? money($d['deposit']) : null,
                             'Preferred term' => isset($d['term']) ? $d['term'].' months' : 'Not sure',

@@ -135,7 +135,7 @@ class AdminTest extends TestCase
         Lead::factory()->type(LeadType::Service)->count(3)->create(['appointment_date' => $day, 'appointment_time' => '08:00', 'details' => ['registration' => 'A777', 'vehicle_make' => 'Suzuki', 'vehicle_model' => 'Jimny', 'service_type' => 'oil']]);
 
         $this->actingAs($this->staff(Role::Service))->get('/admin/service?day='.$day.'&month='.substr($day, 0, 7))
-            ->assertOk()->assertSee('3/3 full')->assertSee('A777 · Suzuki Jimny')->assertSee('3 of 3 places booked');
+            ->assertOk()->assertSee('3 of 3 booked')->assertSee('data-full="true"', false)->assertSee('A777 · Suzuki Jimny')->assertSee('3 of 3 places booked');
     }
 
     public function test_finance_pipeline_moves_applications(): void
@@ -229,5 +229,62 @@ class AdminTest extends TestCase
         $this->assertNull(Setting::financeRate(), 'No finance rate is invented');
         $this->actingAs(User::where('email', 'admin@hadeed.test')->sole())->get('/admin')->assertOk();
         $this->get('/pre-owned')->assertSee('Sample listing');
+    }
+
+    public function test_every_dashboard_link_opens_for_the_role_that_sees_it(): void
+    {
+        // Sales could see a finance tile linking to the finance board (403), and the
+        // service calendar offered the service team a Settings link (403).
+        Lead::factory()->type(LeadType::Finance)->create();
+        Lead::factory()->type(LeadType::Service)->create(['appointment_date' => Booking::days()[0]->toDateString(), 'appointment_time' => '08:00']);
+        foreach (Role::cases() as $role) {
+            $user = $this->staff($role);
+            foreach (['/admin', '/admin/service', '/admin/finance', '/admin/vehicles', '/admin/leads'] as $page) {
+                $res = $this->actingAs($user)->get($page);
+                if ($res->status() !== 200) {
+                    continue;
+                }
+                preg_match_all('#href="'.preg_quote(url('/admin'), '#').'(/[a-z]+)?["?/]#', (string) $res->getContent(), $m);
+                foreach (array_unique($m[1]) as $area) {
+                    $this->actingAs($user)->get('/admin'.$area)->assertOk();
+                }
+            }
+        }
+    }
+
+    public function test_service_calendar_ignores_impossible_dates(): void
+    {
+        $admin = $this->staff(Role::Admin);
+        $this->actingAs($admin)->get('/admin/service?day=2026-13-45')->assertOk()->assertSee(today()->format('l j F'));
+        $this->actingAs($admin)->get('/admin/service?day=2026-02-30&month=2026-13')->assertOk()->assertSee(today()->format('F Y'));
+        $this->actingAs($admin)->get('/admin/service?day=2026-11-03')->assertOk()->assertSee('November 2026')->assertSee('Tuesday 3 November');
+    }
+
+    public function test_saving_an_unchanged_assignee_adds_no_timeline_note(): void
+    {
+        $admin = $this->staff(Role::Admin);
+        $rep = $this->staff(Role::Sales);
+        $lead = Lead::factory()->type(LeadType::Enquiry)->create(['assigned_to' => $rep->id]);
+
+        // The Manage form always posts the select's value, as a string.
+        foreach ([1, 2] as $i) {
+            $this->actingAs($admin)->patch(route('admin.leads.update', $lead), ['status' => $lead->status->value, 'assigned_to' => (string) $rep->id])->assertSessionHasNoErrors();
+        }
+        $this->assertSame(0, $lead->notes()->where('kind', 'assign')->count());
+    }
+
+    public function test_previous_and_next_follow_the_inbox_order(): void
+    {
+        $admin = $this->staff(Role::Admin);
+        $a = Lead::factory()->type(LeadType::Service)->create(['status' => LeadStatus::Contacted]);
+        $b = Lead::factory()->type(LeadType::TestDrive)->create(['status' => LeadStatus::Contacted]);
+        $c = Lead::factory()->type(LeadType::Service)->create(['status' => LeadStatus::Contacted]);
+        $new = Lead::factory()->type(LeadType::Parts)->create();
+
+        // Inbox order: new first, then newest first: $new, $c, $b, $a.
+        $this->actingAs($admin)->get('/admin/leads')->assertSeeInOrder([$new->name, $c->name, $b->name, $a->name]);
+        $html = (string) $this->actingAs($admin)->get(route('admin.leads.show', $b))->getContent();
+        $this->assertStringContainsString('href="'.route('admin.leads.show', $c).'" class="a-btn a-btn-ghost" aria-label="Previous lead in the inbox"', $html);
+        $this->assertStringContainsString('href="'.route('admin.leads.show', $a).'" class="a-btn a-btn-ghost" aria-label="Next lead in the inbox"', $html);
     }
 }

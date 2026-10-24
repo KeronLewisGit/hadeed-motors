@@ -32,7 +32,7 @@
                 <form method="GET" action="{{ route('finance') }}#estimate" class="panel p-6 md:p-8"
                     x-data="loanEstimator({ rate: {{ $rate }}, price: '{{ $input['price'] }}', deposit: '{{ $input['deposit'] }}', term: {{ $input['term'] }} })" @submit.prevent>
                     <h2 class="text-xl font-bold font-sans">Estimate a monthly payment</h2>
-                    <p class="mt-1 text-ink-2">At FDC's indicative rate of <strong class="num">{{ rtrim(rtrim(number_format($rate, 2), '0'), '.') }}% a year</strong>.</p>
+                    <p class="mt-1 text-ink-2">At FDC's indicative rate of <strong class="num">{{ plain_number($rate) }}% a year</strong>.</p>
                     <div class="mt-6 grid gap-5 sm:grid-cols-2">
                         <x-field name="price" label="Car price (EC$)" inputmode="numeric" x-model="price" :value="$input['price']" placeholder="e.g. 65000" />
                         <x-field name="deposit" label="Deposit (EC$)" inputmode="numeric" x-model="deposit" :value="$input['deposit']" placeholder="e.g. 15000" />

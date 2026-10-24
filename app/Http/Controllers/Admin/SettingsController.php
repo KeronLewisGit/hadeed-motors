@@ -25,7 +25,7 @@ class SettingsController extends Controller
             'service_daily_capacity' => ['required', 'integer', 'min:1', 'max:200'],
         ], [], ['finance_indicative_rate' => 'indicative rate']);
 
-        Setting::put('finance_indicative_rate', isset($data['finance_indicative_rate']) ? rtrim(rtrim(number_format((float) $data['finance_indicative_rate'], 2, '.', ''), '0'), '.') : null);
+        Setting::put('finance_indicative_rate', isset($data['finance_indicative_rate']) ? plain_number((float) $data['finance_indicative_rate']) : null);
         Setting::put('service_daily_capacity', (string) $data['service_daily_capacity']);
 
         return back()->with('status', 'Settings saved.');

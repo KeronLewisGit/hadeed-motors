@@ -142,7 +142,7 @@
             <x-plate-tag code="05" label="Service & parts" />
             <h2 id="service-title" class="display-2 mt-5">Keep it running like the day you bought it.</h2>
             <p class="mt-5 measure text-ink-2">Book a drop-off online and see which days still have space. Our technicians work on Nissan and Suzuki every day, and the parts counter can order what isn't on the shelf.</p>
-            <x-spec class="mt-7 max-w-md" :rows="['Workshop' => 'Mon–Thu 8–5, Fri 8–4', 'Drop-off' => 'From 8:00am', 'Parts' => 'Send a VIN, get a call back', 'Phone' => format_phone(hadeed('phone'))]" />
+            <x-spec class="mt-7 max-w-md" :rows="['Workshop' => \App\Support\Hours::summary(true), 'Drop-off' => 'From 8:00am', 'Parts' => 'Send a VIN, get a call back', 'Phone' => format_phone(hadeed('phone'))]" />
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a href="{{ route('service') }}#book" class="btn btn-primary">Book a service<x-icon name="arrow-right" class="nudge h-4 w-4" /></a>
                 <a href="{{ route('parts') }}" class="btn btn-outline">Request a part</a>
@@ -177,7 +177,7 @@
             <div>
                 <x-plate-tag code="07" label="Visit" />
                 <h2 id="visit-title" class="display-2 mt-5">Hadeed Motors Complex, Old Parham Road.</h2>
-                <x-spec class="mt-8" :rows="collect(hadeed('hours'))->mapWithKeys(fn ($h) => [$h['days'] => $h['open'] ? date('g:i a', strtotime($h['open'])).' – '.date('g:i a', strtotime($h['close'])) : 'Closed'])->all()" />
+                <x-spec class="mt-8" :rows="\App\Support\Hours::rows()" />
                 <div class="mt-8 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ hadeed('map_url') }}" class="btn btn-primary" target="_blank" rel="noopener"><x-icon name="map-pin" class="h-4 w-4" />Get directions</a>
                     <a href="{{ route('contact') }}" class="btn btn-outline">Contact us</a>

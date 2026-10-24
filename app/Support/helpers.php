@@ -29,13 +29,6 @@ if (! function_exists('tel_href')) {
     }
 }
 
-if (! function_exists('sms_href')) {
-    function sms_href(?string $number): string
-    {
-        return 'sms:+'.(us_digits($number) ?? preg_replace('/\D+/', '', (string) $number));
-    }
-}
-
 if (! function_exists('format_phone')) {
     /** 268-481-2500 for +1 numbers (the way Antiguans write them), the input unchanged otherwise. */
     function format_phone(?string $number): string
@@ -123,6 +116,27 @@ if (! function_exists('money')) {
         }
 
         return hadeed('currency', 'EC$').number_format((float) $amount, $cents ? 2 : 0);
+    }
+}
+
+if (! function_exists('amount_input')) {
+    /**
+     * A typed money amount as whole dollars: "65,000.00" → 65000, junk → 0. The same
+     * rules as clean() in resources/js/app.js, so the estimator agrees with or without JS.
+     */
+    function amount_input(mixed $value, int $max = 5_000_000): int
+    {
+        $clean = preg_replace('/[^0-9.]/', '', is_scalar($value) ? (string) $value : '') ?? '';
+
+        return is_numeric($clean) ? (int) min($max, floor((float) $clean)) : 0;
+    }
+}
+
+if (! function_exists('plain_number')) {
+    /** 9.50 → "9.5", 9.00 → "9": a rate or percentage without trailing zeros. */
+    function plain_number(float $n, int $decimals = 2): string
+    {
+        return rtrim(rtrim(number_format($n, $decimals, '.', ''), '0'), '.');
     }
 }
 

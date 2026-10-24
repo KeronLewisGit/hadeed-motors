@@ -48,7 +48,7 @@ return [
             'report' => false,
         ],
 
-        // Project photos uploaded in the admin. They sit inside the web root
+        // Vehicle photos uploaded in the admin. They sit inside the web root
         // (public/ locally, public_html/ on Hostinger) so no storage symlink is needed.
         'uploads' => [
             'driver' => 'local',

@@ -36,8 +36,8 @@ class PageController extends Controller
     public function finance(Request $request): View
     {
         $rate = Setting::financeRate();
-        $price = (int) min(5_000_000, max(0, (int) preg_replace('/\D+/', '', input_string($request->query('price')))));
-        $deposit = (int) min(5_000_000, max(0, (int) preg_replace('/\D+/', '', input_string($request->query('deposit')))));
+        $price = amount_input($request->query('price'));
+        $deposit = amount_input($request->query('deposit'));
         $term = (int) input_string($request->query('term'));
         $term = in_array($term, (array) config('hadeed.finance.terms'), true) ? $term : 60;
 
@@ -104,8 +104,8 @@ class PageController extends Controller
         $page = input_string($request->query('page'));
         $model = input_string($request->query('model'));
 
-        if ($page === 'vehicle' && ($m = config('hadeed.models.'.$model))) {
-            return redirect()->route('lineup.show', [$m['brand'], $model], 301);
+        if ($page === 'vehicle' && ($brand = Lineup::brandOf($model))) {
+            return redirect()->route('lineup.show', [$brand, $model], 301);
         }
 
         $route = match ($page) {

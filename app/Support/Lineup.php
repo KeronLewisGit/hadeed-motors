@@ -13,19 +13,37 @@ final class Lineup
         return $brand ? array_filter($models, fn (array $m) => $m['brand'] === $brand) : $models;
     }
 
+    /**
+     * One model by key. Looked up in the array, never as a dotted config path, so a
+     * key like "jimny.trims" from a URL can't reach inside a model.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function get(string $key): ?array
+    {
+        $models = (array) config('hadeed.models');
+
+        return array_key_exists($key, $models) && is_array($models[$key]) ? $models[$key] : null;
+    }
+
     /** @return array<string, mixed>|null */
     public static function find(string $brand, string $key): ?array
     {
-        $m = config('hadeed.models.'.$key);
+        $m = self::get($key);
 
-        return is_array($m) && $m['brand'] === $brand ? $m : null;
+        return $m !== null && $m['brand'] === $brand ? $m : null;
+    }
+
+    public static function brandOf(string $key): ?string
+    {
+        return self::get($key)['brand'] ?? null;
     }
 
     public static function label(string $key): string
     {
-        $m = config('hadeed.models.'.$key);
+        $m = self::get($key);
 
-        return is_array($m) ? config('hadeed.brands.'.$m['brand'].'.name').' '.$m['name'] : $key;
+        return $m !== null ? config('hadeed.brands.'.$m['brand'].'.name').' '.$m['name'] : $key;
     }
 
     /** @return array<string, string> model key => "Suzuki Jimny", grouped order by brand */

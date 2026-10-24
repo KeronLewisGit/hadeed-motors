@@ -3,20 +3,8 @@
 @source '../views';
 @source '../js';
 
-/* dark: follows the toggle when set, otherwise the operating system. */
-@custom-variant dark {
-    &:where([data-theme='dark'], [data-theme='dark'] *) {
-        @slot;
-    }
-    @media (prefers-color-scheme: dark) {
-        &:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
-            @slot;
-        }
-    }
-}
-
 /*
- * Design tokens. Graphite and gunmetal (tyres, dashboards, the showroom floor),
+ * Design tokens. Graphite (tyres, dashboards, the showroom floor),
  * a showroom-white surface, and one accent: Antiguan sunrise coral. It is orange
  * enough to stay clear of the Nissan and Suzuki reds on the cars themselves.
  * Coral is a fill (with graphite text, 5.5:1) and never small text on white;
@@ -38,8 +26,6 @@
     --graphite-950: #0e1013;
     --graphite-900: #16191d;
     --graphite-800: #1f242a;
-    --graphite-700: #2a3038;
-    --gunmetal: #3b434d;
     --accent: #f0643c;
     --accent-hover: #ff7a4d;
     --accent-ink: #16191d;
@@ -81,8 +67,9 @@
         --focus: #ff9b76;
         --accent-soft: #3a2219;
         --accent-text: #ff9b76;
-        --primary: #f0643c;
-        --primary-hover: #ff7a4d;
+        /* Primary stays neutral in dark mode, so coral keeps meaning "the main action". */
+        --primary: #eef0f2;
+        --primary-hover: #ffffff;
         --primary-ink: #16191d;
         --series-1: #3987e5;
         --series-track: #1c2c3d;
@@ -107,8 +94,8 @@
     --focus: #ff9b76;
     --accent-soft: #3a2219;
     --accent-text: #ff9b76;
-    --primary: #f0643c;
-    --primary-hover: #ff7a4d;
+    --primary: #eef0f2;
+    --primary-hover: #ffffff;
     --primary-ink: #16191d;
     --series-1: #3987e5;
     --series-track: #1c2c3d;
@@ -134,18 +121,10 @@
     --color-link: var(--link);
     --color-graphite-950: var(--graphite-950);
     --color-graphite-900: var(--graphite-900);
-    --color-graphite-800: var(--graphite-800);
-    --color-graphite-700: var(--graphite-700);
-    --color-gunmetal: var(--gunmetal);
     --color-accent: var(--accent);
-    --color-accent-hover: var(--accent-hover);
     --color-accent-ink: var(--accent-ink);
     --color-accent-soft: var(--accent-soft);
     --color-accent-text: var(--accent-text);
-    --color-primary: var(--primary);
-    --color-primary-ink: var(--primary-ink);
-    --color-series: var(--series-1);
-    --color-series-track: var(--series-track);
 
     --shadow-sm: var(--shadow-sm);
     --shadow-md: var(--shadow-md);
@@ -185,7 +164,7 @@
     }
     .js [x-cloak] { display: none !important; }
     /* Dark bands get a coral ring; coral fills get a graphite one. */
-    :where(header, footer, .on-dark, .bg-graphite-900, .bg-graphite-950, .bg-graphite-800) :focus-visible { outline-color: var(--accent); }
+    :where(header, footer, .on-dark, .bg-graphite-900, .bg-graphite-950) :focus-visible { outline-color: var(--accent); }
     :where(.bg-accent, .btn-accent) :focus-visible, .btn-accent:focus-visible { outline-color: var(--ink); }
     :where(header, footer, .on-dark) .btn-accent:focus-visible { outline-color: #fff; }
 }

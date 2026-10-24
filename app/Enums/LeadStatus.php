@@ -45,9 +45,4 @@ enum LeadStatus: string
             self::Lost => 'x',
         };
     }
-
-    public function isOpen(): bool
-    {
-        return ! in_array($this, [self::Sold, self::Lost], true);
-    }
 }

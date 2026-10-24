@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\FinanceStatus;
 use App\Enums\LeadStatus;
 use App\Enums\LeadType;
+use App\Support\Lineup;
 use Database\Factories\LeadFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -117,8 +118,8 @@ class Lead extends Model
         if ($this->vehicle) {
             return $this->vehicle->title;
         }
-        if ($this->model_key && ($m = config('hadeed.models.'.$this->model_key))) {
-            return config('hadeed.brands.'.$m['brand'].'.name').' '.$m['name'];
+        if ($this->model_key && Lineup::get($this->model_key) !== null) {
+            return Lineup::label($this->model_key);
         }
         $d = $this->details ?? [];
         if (! empty($d['vehicle_make']) || ! empty($d['vehicle_model'])) {
@@ -160,6 +161,16 @@ class Lead extends Model
     public function scopeVisibleTo(Builder $query, User $user): void
     {
         $query->whereIn('type', $user->leadTypeValues());
+    }
+
+    /**
+     * The inbox order: new leads first, then newest first.
+     *
+     * @param  Builder<self>  $query
+     */
+    public function scopeInboxOrder(Builder $query): void
+    {
+        $query->orderByRaw("case when status = 'new' then 0 else 1 end")->orderByDesc('id');
     }
 
     /**

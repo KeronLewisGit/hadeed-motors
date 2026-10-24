@@ -10,9 +10,9 @@
     <x-page-header :title="$full" :lead="$m['tagline']" :code="strtoupper(substr($brandName, 0, 3))" :label="'New '.$m['body']" :photo="$m['photo']">
         <nav aria-label="Breadcrumb" class="mt-6 text-sm text-white/75">
             <ol class="flex flex-wrap items-center gap-2">
-                <li><a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('lineup.index') }}">New vehicles</a></li>
+                <li><a class="inline-flex min-h-11 min-w-11 items-center hover:text-white" href="{{ route('lineup.index') }}">New vehicles</a></li>
                 <li aria-hidden="true">/</li>
-                <li><a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('lineup.brand', $brandKey) }}">{{ $brandName }}</a></li>
+                <li><a class="inline-flex min-h-11 min-w-11 items-center hover:text-white" href="{{ route('lineup.brand', $brandKey) }}">{{ $brandName }}</a></li>
                 <li aria-hidden="true">/</li>
                 <li aria-current="page" class="text-white">{{ $m['name'] }}</li>
             </ol>

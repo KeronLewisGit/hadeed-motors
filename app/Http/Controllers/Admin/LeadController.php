@@ -31,8 +31,7 @@ class LeadController extends Controller
             ->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
 
         return view('admin.leads.index', [
-            'leads' => (clone $base)->with(['vehicle', 'assignee'])->filter($filters)
-                ->orderByRaw("case when status = 'new' then 0 else 1 end")->latest('id')
+            'leads' => (clone $base)->with(['vehicle', 'assignee'])->filter($filters)->inboxOrder()
                 ->paginate(25)->withQueryString(),
             'filters' => $filters,
             'counts' => $counts,
@@ -46,7 +45,8 @@ class LeadController extends Controller
         Gate::authorize('view', $lead);
         $lead->load(['vehicle.coverPhoto', 'assignee', 'notes.user', 'files']);
         $user = $this->user($request);
-        $ids = Lead::visibleTo($user)->pluck('id');
+        // Previous / next in the same order as the inbox: new leads first, then newest first.
+        $ids = Lead::visibleTo($user)->inboxOrder()->pluck('id');
         $pos = $ids->search($lead->id);
 
         return view('admin.leads.show', [
@@ -75,8 +75,10 @@ class LeadController extends Controller
         if (isset($data['status']) && $lead->moveTo($status = LeadStatus::from($data['status']))) {
             $lead->notes()->create(['user_id' => $user->id, 'kind' => 'status', 'body' => 'Status changed to '.$status->label().'.']);
         }
-        if (array_key_exists('assigned_to', $data) && $lead->assigned_to !== $data['assigned_to']) {
-            $assignee = $data['assigned_to'] ? User::find($data['assigned_to']) : null;
+        // The form posts the id as a string; compare as integers so an unchanged choice adds no note.
+        $assignTo = isset($data['assigned_to']) ? (int) $data['assigned_to'] : null;
+        if (array_key_exists('assigned_to', $data) && $lead->assigned_to !== $assignTo) {
+            $assignee = $assignTo ? User::find($assignTo) : null;
             if ($assignee && ! $assignee->canWork($lead->type)) {
                 return back()->withErrors(['assigned_to' => "{$assignee->name} works in {$assignee->role->label()} and can't see this lead."]);
             }

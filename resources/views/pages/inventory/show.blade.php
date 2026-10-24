@@ -18,9 +18,9 @@
     <x-page-header :title="$title" :code="$vehicle->condition === \App\Enums\Condition::New ? 'NEW' : 'USED'" :label="$vehicle->stock_no ? 'Stock '.$vehicle->stock_no : $vehicle->body_type">
         <nav aria-label="Breadcrumb" class="mt-5 text-sm text-white/75">
             <ol class="flex flex-wrap items-center gap-2">
-                <li><a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('inventory.index') }}">Pre-owned</a></li>
+                <li><a class="inline-flex min-h-11 min-w-11 items-center hover:text-white" href="{{ route('inventory.index') }}">Pre-owned</a></li>
                 <li aria-hidden="true">/</li>
-                <li><a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('inventory.index', ['make' => $vehicle->make]) }}">{{ $vehicle->make }}</a></li>
+                <li><a class="inline-flex min-h-11 min-w-11 items-center hover:text-white" href="{{ route('inventory.index', ['make' => $vehicle->make]) }}">{{ $vehicle->make }}</a></li>
                 <li aria-hidden="true">/</li>
                 <li aria-current="page" class="text-white">{{ $vehicle->model }}</li>
             </ol>
@@ -99,7 +99,7 @@
             <div class="panel p-6 md:p-7">
                 <h2 class="text-lg font-bold font-sans">Finance this car</h2>
                 @if ($estimate)
-                    <p class="mt-2 text-ink-2">With a {{ money($estimate['deposit']) }} deposit over {{ $estimate['months'] }} months at an indicative {{ rtrim(rtrim(number_format($estimate['rate'], 2), '0'), '.') }}%:</p>
+                    <p class="mt-2 text-ink-2">With a {{ money($estimate['deposit']) }} deposit over {{ $estimate['months'] }} months at an indicative {{ plain_number($estimate['rate']) }}%:</p>
                     <p class="font-display num mt-3 text-2xl font-bold">{{ money($estimate['monthly'], true) }}<span class="text-base font-sans font-semibold text-ink-3"> a month</span></p>
                     <p class="mt-2 text-sm text-ink-3">An estimate only, not an offer. FDC sets the rate, fees and term when it reviews your application.</p>
                 @else

@@ -39,7 +39,7 @@
     </div>
 
     <div class="mt-6 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-        <section class="a-card p-5" aria-labelledby="chart-title">
+        <section class="a-card min-w-0 p-5" aria-labelledby="chart-title">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="chart-title" class="font-semibold">Leads per day, last {{ $chartDays }} days</h2>
                 <p class="text-sm text-ink-3 num">{{ $daily->sum('count') }} total</p>
@@ -56,13 +56,13 @@
                 <div class="mt-2 flex justify-between text-xs text-ink-3"><span>{{ $daily->first()['date']->format('j M') }}</span><span>Today</span></div>
             </div>
         </section>
-        <section class="a-card p-5" aria-labelledby="type-title">
+        <section class="a-card min-w-0 p-5" aria-labelledby="type-title">
             <h2 id="type-title" class="font-semibold">By type, last {{ $chartDays }} days</h2>
             @php($maxType = max(1, $byType->max('count')))
-            <ul class="mt-4 space-y-3">
+            <ul class="mt-3 space-y-1">
                 @foreach ($byType as $row)
                     <li>
-                        <a href="{{ route('admin.leads.index', ['type' => $row['type']->value]) }}" class="block rounded hover:bg-surface-2">
+                        <a href="{{ route('admin.leads.index', ['type' => $row['type']->value]) }}" class="block min-h-11 rounded px-1 py-1.5 hover:bg-surface-2">
                             <div class="flex justify-between text-sm"><span class="inline-flex items-center gap-2"><x-icon :name="$row['type']->icon()" class="h-4 w-4 text-ink-3" />{{ $row['type']->label() }}</span><span class="num font-semibold">{{ $row['count'] }}</span></div>
                             <div class="cal-meter mt-1.5"><span style="width: {{ $row['count'] / $maxType * 100 }}%"></span></div>
                         </a>
@@ -84,8 +84,8 @@
     </section>
 
     <div class="mt-6 grid gap-6 xl:grid-cols-2">
-        <section class="a-card" aria-labelledby="queue-title">
-            <div class="flex items-center justify-between p-5 pb-3"><h2 id="queue-title" class="font-semibold">Call next (oldest new first)</h2><a class="text-sm text-link underline" href="{{ route('admin.leads.index', ['status' => 'new']) }}">All new</a></div>
+        <section class="a-card min-w-0" aria-labelledby="queue-title">
+            <div class="flex items-center justify-between gap-3 px-5 pb-1.5 pt-3.5"><h2 id="queue-title" class="font-semibold">Call next (oldest new first)</h2><a class="inline-flex min-h-11 flex-none items-center text-sm text-link underline" href="{{ route('admin.leads.index', ['status' => 'new']) }}">All new</a></div>
             @forelse ($queue as $l)
                 <a href="{{ route('admin.leads.show', $l) }}" class="flex items-center gap-3 border-t border-line px-5 py-3 hover:bg-surface-2">
                     <x-icon :name="$l->type->icon()" class="h-5 w-5 flex-none text-ink-3" />
@@ -96,7 +96,7 @@
                 <p class="border-t border-line px-5 py-6 text-ink-3">No new leads. Nice work.</p>
             @endforelse
         </section>
-        <section class="a-card" aria-labelledby="up-title">
+        <section class="a-card min-w-0" aria-labelledby="up-title">
             <div class="p-5 pb-3"><h2 id="up-title" class="font-semibold">Appointments, today to {{ today()->addDays(2)->format('l') }}</h2></div>
             @forelse ($upcoming as $l)
                 <a href="{{ route('admin.leads.show', $l) }}" class="flex items-center gap-3 border-t border-line px-5 py-3 hover:bg-surface-2">

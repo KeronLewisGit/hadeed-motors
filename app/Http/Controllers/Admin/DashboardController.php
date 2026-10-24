@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\FinanceStatus;
 use App\Enums\LeadStatus;
 use App\Enums\LeadType;
+use App\Enums\Role;
 use App\Enums\VehicleStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
@@ -58,7 +59,8 @@ class DashboardController extends Controller
             $todayBooked = Lead::holdingServiceSlot()->whereDate('appointment_date', today())->count();
             $tiles[] = ['label' => 'Service bookings today', 'value' => $todayBooked, 'note' => 'of '.Setting::serviceCapacity().' places', 'href' => route('admin.service.index')];
         }
-        if ($user->canWork(LeadType::Finance)) {
+        // The board is the finance desk's (sales can see finance leads in the inbox, not the board).
+        if ($user->hasRole(Role::Admin, Role::Finance)) {
             $tiles[] = ['label' => 'Finance applications to review', 'value' => Lead::where('type', LeadType::Finance)
                 ->whereIn('finance_status', [FinanceStatus::Received, FinanceStatus::Reviewing, FinanceStatus::NeedsDocuments])->count(),
                 'note' => 'received, reviewing or waiting on documents', 'href' => route('admin.finance.index')];

@@ -1,6 +1,3 @@
-@php
-    $interestOptions = ['New models' => $interests['models'], 'In stock now' => $interests['stock'], 'Other' => ['undecided' => 'Not sure yet']];
-@endphp
 <x-layouts.site title="Value my trade-in" description="Get a trade-in valuation from Hadeed Motors, St John's. Send photos and a few details about your car." :mobile-bar="false">
     <x-page-header title="Value my trade-in" lead="Send a few details and some photos. A sales consultant looks them over and calls you with a first figure; the final number follows a quick inspection at the showroom." code="TI" label="Trade-in" photo="used-swift" />
 
@@ -39,7 +36,7 @@
             </fieldset>
             <fieldset class="space-y-5">
                 <legend class="fieldset-title mb-5"><span class="step">3</span>What you'd like next</legend>
-                <x-select name="interest" label="Car you're interested in" :options="$interestOptions" :optional="true" placeholder="Just the valuation for now" :value="request('interest')" />
+                <x-select name="interest" label="Car you're interested in" :options="$interests" :optional="true" placeholder="Just the valuation for now" :value="input_string(request('interest'))" />
             </fieldset>
             <x-contact-fields :step="4" />
             <div class="flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center">

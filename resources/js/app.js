@@ -45,7 +45,8 @@ Alpine.data('loanEstimator', (config) => ({
     price: config.price ?? '',
     deposit: config.deposit ?? '',
     term: Number(config.term) || 60,
-    clean(v) { return Math.max(0, Number(String(v).replace(/[^0-9.]/g, '')) || 0); },
+    // Whole dollars, capped: the same rules as amount_input() in PHP, so both give one figure.
+    clean(v) { return Math.min(5000000, Math.max(0, Math.floor(Number(String(v).replace(/[^0-9.]/g, '')) || 0))); },
     get principal() { return Math.max(0, this.clean(this.price) - Math.min(this.clean(this.deposit), this.clean(this.price))); },
     get monthly() { return monthlyPayment(this.principal, this.rate, this.term); },
     get ready() { return this.clean(this.price) > 0 && this.rate > 0; },

@@ -38,7 +38,7 @@ class LeadFormController extends Controller
         return view('pages.forms.test-drive', [
             'vehicle' => $vehicle,
             'model' => $model,
-            'stock' => Vehicle::available()->orderBy('make')->orderBy('model')->get(['id', 'slug', 'year', 'make', 'model', 'trim']),
+            'interests' => $this->interestOptions('Not sure yet, help me choose'),
             'days' => Booking::days(),
             'slots' => $this->slotGrid(),
         ]);
@@ -242,11 +242,11 @@ class LeadFormController extends Controller
             return to_route('thanks');
         }
         $validator = validator($request->all(), $this->contactRules() + [
-            'residency' => ['required', Rule::in(['citizen', 'resident', 'work_permit'])],
-            'employment' => ['required', Rule::in(['employed', 'self_employed', 'retired', 'other'])],
+            'residency' => ['required', Rule::in(array_keys((array) config('hadeed.finance.residency')))],
+            'employment' => ['required', Rule::in(array_keys((array) config('hadeed.finance.employment')))],
             'employer' => ['nullable', 'required_if:employment,employed', 'string', 'max:120'],
             'job_title' => ['nullable', 'string', 'max:120'],
-            'years_employed' => ['required', Rule::in(['u1', '1_3', '3_5', 'o5'])],
+            'years_employed' => ['required', Rule::in(array_keys((array) config('hadeed.finance.years_employed')))],
             'income_band' => ['required', Rule::in(array_keys((array) config('hadeed.finance.income_bands')))],
             'deposit' => ['required', 'integer', 'min:0', 'max:5000000'],
             'term' => ['nullable', Rule::in(array_map('strval', (array) config('hadeed.finance.terms')))],
@@ -377,13 +377,19 @@ class LeadFormController extends Controller
         return null;
     }
 
-    /** @return array{models: array<string, string>, stock: array<string, string>} */
-    private function interestOptions(): array
+    /**
+     * The grouped "which car?" options shared by the test-drive, trade-in and finance forms,
+     * in the "m:key" / "v:id" / "undecided" format parseInterest() reads back.
+     *
+     * @return array<string, array<string, string>>
+     */
+    private function interestOptions(string $undecided = 'Not sure yet'): array
     {
         return [
-            'models' => collect(Lineup::options())->mapWithKeys(fn (string $label, string $key) => ['m:'.$key => 'New '.$label])->all(),
-            'stock' => Vehicle::available()->orderBy('condition')->orderBy('make')->get(['id', 'year', 'make', 'model', 'trim', 'condition'])
+            'New models' => collect(Lineup::options())->mapWithKeys(fn (string $label, string $key) => ['m:'.$key => 'New '.$label])->all(),
+            'In stock now' => Vehicle::available()->orderBy('condition')->orderBy('make')->orderBy('model')->get(['id', 'year', 'make', 'model', 'trim', 'condition'])
                 ->mapWithKeys(fn (Vehicle $v) => ['v:'.$v->id => $v->title.($v->condition->value === 'used' ? ' (pre-owned)' : ' (in stock)')])->all(),
+            'Other' => ['undecided' => $undecided],
         ];
     }
 

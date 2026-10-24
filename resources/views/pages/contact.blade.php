@@ -2,7 +2,7 @@
     $topic = old('topic', in_array(request('topic'), ['sales', 'callback', 'service', 'other'], true) ? request('topic') : 'sales');
     $address = hadeed('address');
 @endphp
-<x-layouts.site title="Contact and opening hours" description="Hadeed Motors, Hadeed Motors Complex, Old Parham Road, St John's, Antigua. 268-481-2500. Monday to Thursday 8am–5pm, Friday 8am–4pm.">
+<x-layouts.site title="Contact and opening hours" :description="'Hadeed Motors, Hadeed Motors Complex, Old Parham Road, St John\'s, Antigua. '.format_phone(hadeed('phone')).'. '.\App\Support\Hours::summary().'.'">
     <x-page-header title="Contact us" lead="Call, WhatsApp, or send a message and we'll call you back during opening hours." code="HM" label="Contact" photo="stjohns-harbour" />
 
     <div class="wrap mt-12 grid gap-12 md:mt-16 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
@@ -23,7 +23,7 @@
             </section>
             <section aria-labelledby="hours-title">
                 <h2 id="hours-title" class="display-3">Opening hours</h2>
-                <x-spec class="mt-5" :rows="collect(hadeed('hours'))->mapWithKeys(fn ($h) => [$h['days'] => $h['open'] ? date('g:i a', strtotime($h['open'])).' – '.date('g:i a', strtotime($h['close'])) : 'Closed'])->all()" />
+                <x-spec class="mt-5" :rows="\App\Support\Hours::rows()" />
             </section>
             <section aria-labelledby="addr-title">
                 <h2 id="addr-title" class="display-3">Find us</h2>

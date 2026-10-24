@@ -30,10 +30,7 @@
             'addressLocality' => $address['city'],
             'addressCountry' => $address['country_code'],
         ],
-        'openingHoursSpecification' => [
-            ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], 'opens' => '08:00', 'closes' => '17:00'],
-            ['@type' => 'OpeningHoursSpecification', 'dayOfWeek' => 'Friday', 'opens' => '08:00', 'closes' => '16:00'],
-        ],
+        'openingHoursSpecification' => \App\Support\Hours::schema(),
         'areaServed' => 'Antigua and Barbuda',
     ];
     $tdUrl = $testDriveUrl ?? route('test-drive');
@@ -71,7 +68,7 @@
 
     <header class="sticky top-0 z-40 bg-graphite-900 text-white">
         <div class="wrap flex h-[4.5rem] items-center gap-2 min-[400px]:gap-3">
-            <a href="{{ route('home') }}" class="mr-auto flex-none rounded" aria-label="Hadeed Motors, home"><x-logo tone="light" /></a>
+            <a href="{{ route('home') }}" class="mr-auto inline-flex min-h-11 flex-none items-center rounded" aria-label="Hadeed Motors, home"><x-logo tone="light" /></a>
 
             <nav class="hidden items-center lg:flex" aria-label="Main">
                 @foreach ($nav as $item)
@@ -148,15 +145,15 @@
                 </address>
                 <a class="mt-1 inline-flex min-h-11 items-center gap-1.5 hover:text-white" href="{{ hadeed('map_url') }}" rel="noopener" target="_blank">Get directions<x-icon name="external" class="h-3.5 w-3.5" /><span class="sr-only">(opens Google Maps)</span></a>
                 <dl class="mt-4 space-y-1 text-sm">
-                    @foreach (hadeed('hours') as $h)
-                        <div class="flex justify-between gap-4"><dt>{{ $h['days'] }}</dt><dd class="num whitespace-nowrap text-white">{{ $h['open'] ? date('g', strtotime($h['open'])).'am–'.date('g', strtotime($h['close'])).'pm' : 'Closed' }}</dd></div>
+                    @foreach (\App\Support\Hours::rows() as $days => $time)
+                        <div class="flex justify-between gap-4"><dt>{{ $days }}</dt><dd class="num whitespace-nowrap text-white">{{ $time }}</dd></div>
                     @endforeach
                 </dl>
             </div>
         </div>
         <div class="border-t border-white/10">
             <div class="wrap flex flex-col gap-3 py-6 text-sm text-white/60 md:flex-row md:items-center md:justify-between">
-                <p>© {{ date('Y') }} {{ hadeed('name') }}. Nissan and Suzuki are trademarks of their owners.</p>
+                <p>© {{ date('Y') }} {{ rtrim(hadeed('name'), '.') }}. Nissan and Suzuki are trademarks of their owners.</p>
                 <p class="flex flex-wrap gap-x-5">
                     <a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('privacy') }}">Privacy</a>
                     <a class="inline-flex min-h-11 items-center hover:text-white" href="{{ route('credits') }}">Photo credits</a>

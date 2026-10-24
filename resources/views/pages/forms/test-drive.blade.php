@@ -1,10 +1,5 @@
 @php
     $selected = old('interest', $vehicle ? 'v:'.$vehicle->id : ($model ? 'm:'.$model : ''));
-    $options = [
-        'New models' => collect(\App\Support\Lineup::options())->mapWithKeys(fn ($l, $k) => ['m:'.$k => 'New '.$l])->all(),
-        'In stock now' => $stock->mapWithKeys(fn ($v) => ['v:'.$v->id => $v->title])->all(),
-        'Other' => ['undecided' => 'Not sure yet, help me choose'],
-    ];
     $firstDay = $days[0] ?? null;
 @endphp
 <x-layouts.site title="Book a test drive" description="Book a test drive at Hadeed Motors, St John's: any new Nissan or Suzuki, or a car from our pre-owned stock. Choose a day and time." :mobile-bar="false">
@@ -17,7 +12,7 @@
 
             <fieldset class="space-y-5">
                 <legend class="fieldset-title mb-5"><span class="step">1</span>The car</legend>
-                <x-select name="interest" label="Which vehicle?" :options="$options" :value="$selected" :required="true" placeholder="Choose a vehicle…" />
+                <x-select name="interest" label="Which vehicle?" :options="$interests" :value="$selected" :required="true" placeholder="Choose a vehicle…" />
                 @if ($vehicle)
                     <div class="panel flex items-center gap-4 p-3">
                         @if ($vehicle->photoUrl())<img src="{{ $vehicle->photoUrl() }}" alt="" class="h-16 w-24 flex-none rounded-lg object-cover">@endif
@@ -76,7 +71,7 @@
                 <h2 class="text-lg font-bold font-sans">Good to know</h2>
                 <ul class="mt-3 space-y-3 text-ink-2">
                     <li class="flex gap-3"><x-icon name="key" class="mt-0.5 h-5 w-5 flex-none text-accent-text" />A sales consultant rides along. Bring your driving licence.</li>
-                    <li class="flex gap-3"><x-icon name="clock" class="mt-0.5 h-5 w-5 flex-none text-accent-text" />Monday to Thursday until 5pm, Friday until 4pm.</li>
+                    <li class="flex gap-3"><x-icon name="clock" class="mt-0.5 h-5 w-5 flex-none text-accent-text" />{{ \App\Support\Hours::summary() }}.</li>
                     <li class="flex gap-3"><x-icon name="swap" class="mt-0.5 h-5 w-5 flex-none text-accent-text" /><span>Trading in? <a href="{{ route('trade-in') }}" class="text-link">Send photos first</a> and we'll have a figure ready.</span></li>
                 </ul>
             </div>

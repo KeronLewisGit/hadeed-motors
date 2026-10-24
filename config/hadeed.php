@@ -12,7 +12,6 @@ return [
     'name' => 'Hadeed Motors Ltd.',
     'short_name' => 'Hadeed Motors',
     'founded' => 1972,
-    'founder' => 'Senator Aziz Hadeed',
     'preview' => (bool) env('HADEED_PREVIEW', false),
     'phone' => env('HADEED_PHONE', '268-481-2500'),
     // WhatsApp number (digits or any format). Falls back to the main line when not set.
@@ -33,13 +32,10 @@ return [
     ],
     'map_url' => 'https://www.google.com/maps/search/?api=1&query=Hadeed+Motors+Old+Parham+Road+St+John%27s+Antigua',
 
-    // From hadeedmotors.com. Weekends and public holidays closed.
-    'hours' => [
-        ['days' => 'Monday to Thursday', 'open' => '08:00', 'close' => '17:00'],
-        ['days' => 'Friday', 'open' => '08:00', 'close' => '16:00'],
-        ['days' => 'Saturday, Sunday and public holidays', 'open' => null, 'close' => null],
-    ],
-    // ISO weekday (1 = Monday) => [open, close]. Bookings are only offered inside these.
+    // Opening hours from hadeedmotors.com: ISO weekday (1 = Monday) => [open, close].
+    // Weekends and public holidays are closed. Every hours line on the site, in the
+    // emails and in the schema.org data comes from here (App\Support\Hours), and
+    // bookings are only offered inside these.
     'opening' => [1 => ['08:00', '17:00'], 2 => ['08:00', '17:00'], 3 => ['08:00', '17:00'], 4 => ['08:00', '17:00'], 5 => ['08:00', '16:00']],
     // Public holidays (Y-m-d) when nothing can be booked. Confirm the year's list with the client.
     'closed_dates' => [
@@ -69,7 +65,6 @@ return [
 
     'finance' => [
         'name' => 'Finance & Development Co. Ltd.',
-        'short' => 'FDC',
         'since' => 1984,
         'phone' => '268-481-2569',
         'email' => 'admin@fdc.com.ag',
@@ -92,6 +87,10 @@ return [
             'o12' => 'Over EC$12,000 a month',
         ],
         'terms' => [24, 36, 48, 60, 72, 84],
+        // Answers on the pre-qualification form; the keys are what is stored.
+        'residency' => ['citizen' => 'Citizen of Antigua and Barbuda', 'resident' => 'Permanent resident', 'work_permit' => 'On a work permit'],
+        'employment' => ['employed' => 'Employed', 'self_employed' => 'Self-employed', 'retired' => 'Retired / pension', 'other' => 'Other'],
+        'years_employed' => ['u1' => 'Under 1 year', '1_3' => '1 to 3 years', '3_5' => '3 to 5 years', 'o5' => 'Over 5 years'],
     ],
 
     // Companies linked from hadeedmotors.com.
@@ -207,33 +206,33 @@ return [
     'body_types' => ['Hatchback', 'Sedan', 'SUV', 'Crossover', 'MPV', 'Pickup', 'Van', 'Commercial'],
     'makes' => ['Nissan', 'Suzuki', 'Daihatsu', 'Infiniti', 'BMW', 'Toyota', 'Honda', 'Hyundai', 'Kia', 'Mitsubishi', 'Other'],
 
-    // Photo sizes; credits in config/photo-credits.php. 'ours' = taken at Hadeed Motors.
+    // Photo sizes; credits and licences are in config/photo-credits.php.
     'photos' => [
-        'showroom' => ['w' => 1920, 'h' => 684, 'credit' => 'showroom', 'ours' => true],
-        'model-frontier' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-frontier'],
-        'model-frontier-interior' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-frontier-interior'],
-        'model-grand-vitara' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-grand-vitara'],
-        'model-baleno' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-baleno'],
-        'model-fronx' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-fronx'],
-        'model-fronx-interior' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-fronx-interior'],
-        'model-spresso' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-spresso'],
-        'model-jimny' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-jimny'],
-        'model-jimny-trail' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-jimny-trail'],
-        'model-scross' => ['w' => 1920, 'h' => 1278, 'credit' => 'model-scross'],
-        'model-xl7' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-xl7'],
-        'model-carry' => ['w' => 1920, 'h' => 1280, 'credit' => 'model-carry'],
-        'used-navara' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-navara'],
-        'used-xtrail' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-xtrail'],
-        'used-swift' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-swift'],
-        'used-vitara' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-vitara'],
-        'used-vitara-interior' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-vitara-interior'],
-        'used-almera' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-almera'],
-        'used-kicks' => ['w' => 1920, 'h' => 1280, 'credit' => 'used-kicks'],
-        'antigua-coast' => ['w' => 1920, 'h' => 1280, 'credit' => 'antigua-coast'],
-        'shirley-heights' => ['w' => 1920, 'h' => 1280, 'credit' => 'shirley-heights'],
-        'stjohns-harbour' => ['w' => 1920, 'h' => 1280, 'credit' => 'stjohns-harbour'],
-        'service-bay' => ['w' => 1920, 'h' => 1280, 'credit' => 'service-bay'],
-        'parts-store' => ['w' => 1920, 'h' => 1280, 'credit' => 'parts-store'],
+        'showroom' => ['w' => 1920, 'h' => 684],
+        'model-frontier' => ['w' => 1920, 'h' => 1280],
+        'model-frontier-interior' => ['w' => 1920, 'h' => 1280],
+        'model-grand-vitara' => ['w' => 1920, 'h' => 1280],
+        'model-baleno' => ['w' => 1920, 'h' => 1280],
+        'model-fronx' => ['w' => 1920, 'h' => 1280],
+        'model-fronx-interior' => ['w' => 1920, 'h' => 1280],
+        'model-spresso' => ['w' => 1920, 'h' => 1280],
+        'model-jimny' => ['w' => 1920, 'h' => 1280],
+        'model-jimny-trail' => ['w' => 1920, 'h' => 1280],
+        'model-scross' => ['w' => 1920, 'h' => 1278],
+        'model-xl7' => ['w' => 1920, 'h' => 1280],
+        'model-carry' => ['w' => 1920, 'h' => 1280],
+        'used-navara' => ['w' => 1920, 'h' => 1280],
+        'used-xtrail' => ['w' => 1920, 'h' => 1280],
+        'used-swift' => ['w' => 1920, 'h' => 1280],
+        'used-vitara' => ['w' => 1920, 'h' => 1280],
+        'used-vitara-interior' => ['w' => 1920, 'h' => 1280],
+        'used-almera' => ['w' => 1920, 'h' => 1280],
+        'used-kicks' => ['w' => 1920, 'h' => 1280],
+        'antigua-coast' => ['w' => 1920, 'h' => 1280],
+        'shirley-heights' => ['w' => 1920, 'h' => 1280],
+        'stjohns-harbour' => ['w' => 1920, 'h' => 1280],
+        'service-bay' => ['w' => 1920, 'h' => 1280],
+        'parts-store' => ['w' => 1920, 'h' => 1280],
     ],
 
     // First staff account, created by `php artisan db:seed` when both are set.

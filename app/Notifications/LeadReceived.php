@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Enums\LeadType;
 use App\Models\Lead;
+use App\Support\Hours;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -43,7 +44,7 @@ class LeadReceived extends Notification
         });
 
         return $mail
-            ->line("Questions? Call {$phone}, Monday to Thursday 8am to 5pm, Friday 8am to 4pm.")
+            ->line("Questions? Call {$phone}, ".Hours::summary().'.')
             ->salutation('Hadeed Motors, Old Parham Road, St John\'s');
     }
 

@@ -58,7 +58,7 @@
                     <a href="{{ route('admin.leads.index', ['overdue' => 1]) }}" class="a-btn hidden bg-accent-soft text-accent-text sm:inline-flex"><x-icon name="clock" class="h-4 w-4" /><span class="num">{{ $overdue }}</span> waiting over {{ \App\Models\Lead::RESPONSE_HOURS }}h</a>
                 @endif
                 <div class="ml-auto flex items-center gap-1">
-                    <button type="button" class="a-btn w-11 px-0 text-ink-2 hover:bg-surface-2" @click="toggleDensity()" :aria-pressed="(density === 'compact').toString()" aria-label="Compact rows"><x-icon name="rows" /></button>
+                    <button type="button" class="a-btn w-11 px-0 text-ink-2 hover:bg-surface-2" @click="toggleDensity()" :aria-pressed="(density === 'compact').toString()" aria-label="Compact rows" title="Compact rows"><x-icon name="density" /></button>
                     <button type="button" class="a-btn w-11 px-0 text-ink-2 hover:bg-surface-2" onclick="toggleTheme()" aria-label="Switch light or dark theme"><x-icon name="moon" class="dark-hide h-5 w-5" /><x-icon name="sun" class="dark-show h-5 w-5" /></button>
                 </div>
             </div>

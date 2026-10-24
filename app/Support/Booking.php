@@ -18,18 +18,23 @@ final class Booking
     public static function days(): array
     {
         $out = [];
-        $closed = (array) config('hadeed.closed_dates', []);
-        $opening = (array) config('hadeed.opening', []);
         $day = today()->addDay();
         $end = today()->addDays((int) config('hadeed.booking.days_ahead', 30));
         while ($day->lte($end)) {
-            if (isset($opening[$day->dayOfWeekIso]) && ! in_array($day->toDateString(), $closed, true)) {
+            if (self::isOpenOn($day)) {
                 $out[] = $day->copy();
             }
             $day->addDay();
         }
 
         return $out;
+    }
+
+    /** Open that weekday (hadeed.opening) and not a public holiday (hadeed.closed_dates). */
+    public static function isOpenOn(Carbon $day): bool
+    {
+        return config('hadeed.opening.'.$day->dayOfWeekIso) !== null
+            && ! in_array($day->toDateString(), (array) config('hadeed.closed_dates', []), true);
     }
 
     public static function isBookableDay(string $date): bool

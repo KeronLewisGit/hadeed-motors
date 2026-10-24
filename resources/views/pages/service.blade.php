@@ -93,7 +93,7 @@
         <aside class="space-y-6 lg:sticky lg:top-24 lg:h-fit">
             <div class="panel p-6">
                 <h2 class="text-lg font-bold font-sans">Workshop hours</h2>
-                <x-spec class="mt-3" :rows="collect(hadeed('hours'))->mapWithKeys(fn ($h) => [$h['days'] => $h['open'] ? date('g', strtotime($h['open'])).'am – '.date('g', strtotime($h['close'])).'pm' : 'Closed'])->all()" />
+                <x-spec class="mt-3" :rows="\App\Support\Hours::rows()" />
             </div>
             <div class="panel p-6">
                 <h2 class="text-lg font-bold font-sans">Need a part instead?</h2>

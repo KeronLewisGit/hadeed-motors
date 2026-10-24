@@ -1,6 +1,5 @@
 @php
     $fdc = hadeed('finance');
-    $interestOptions = ['New models' => $interests['models'], 'In stock now' => $interests['stock'], 'Other' => ['undecided' => 'Not sure yet']];
 @endphp
 <x-layouts.site title="Finance pre-qualification" description="Pre-qualify for car finance with Finance & Development Co. at Hadeed Motors. No bank numbers, private document upload." :mobile-bar="false">
     <x-page-header title="Get pre-qualified" lead="About five minutes. This isn't a credit application: it tells FDC enough to call you with options and a list of what to bring." code="FA" label="Finance" photo="model-fronx-interior" position="50% 60%" />
@@ -12,11 +11,11 @@
             <x-contact-fields :step="1" title="About you" />
             <fieldset class="space-y-5">
                 <legend class="fieldset-title mb-5"><span class="step">2</span>Residency and work</legend>
-                <x-select name="residency" label="Residency" :options="['citizen' => 'Citizen of Antigua and Barbuda', 'resident' => 'Permanent resident', 'work_permit' => 'On a work permit']" :required="true" />
+                <x-select name="residency" label="Residency" :options="$fdc['residency']" :required="true" />
                 <fieldset>
                     <legend class="label">Employment</legend>
                     <div class="grid gap-2 sm:grid-cols-2">
-                        @foreach (['employed' => 'Employed', 'self_employed' => 'Self-employed', 'retired' => 'Retired / pension', 'other' => 'Other'] as $v => $t)
+                        @foreach ($fdc['employment'] as $v => $t)
                             <label class="choice"><input type="radio" name="employment" value="{{ $v }}" required @checked(old('employment') === $v)>{{ $t }}</label>
                         @endforeach
                     </div>
@@ -26,7 +25,7 @@
                     <x-field name="employer" label="Employer or business name" maxlength="120" autocomplete="organization" hint="Required if you're employed." />
                     <x-field name="job_title" label="Job title" :optional="true" maxlength="120" autocomplete="organization-title" />
                 </div>
-                <x-select name="years_employed" label="Time in this job or business" :options="['u1' => 'Under 1 year', '1_3' => '1 to 3 years', '3_5' => '3 to 5 years', 'o5' => 'Over 5 years']" :required="true" />
+                <x-select name="years_employed" label="Time in this job or business" :options="$fdc['years_employed']" :required="true" />
             </fieldset>
             <fieldset class="space-y-5">
                 <legend class="fieldset-title mb-5"><span class="step">3</span>Income and deposit</legend>
@@ -43,7 +42,7 @@
                     <x-field name="deposit" label="Deposit you can put down (EC$)" type="number" :required="true" min="0" step="100" inputmode="numeric" hint="Your trade-in can count towards it." />
                     <x-select name="term" label="Preferred term" :options="collect($fdc['terms'])->mapWithKeys(fn ($t) => [$t => $t.' months'])->all()" :optional="true" placeholder="Not sure" />
                 </div>
-                <x-select name="interest" label="Car you're interested in" :options="$interestOptions" :required="true" :value="$selected" placeholder="Choose…" />
+                <x-select name="interest" label="Car you're interested in" :options="$interests" :required="true" :value="$selected" placeholder="Choose…" />
             </fieldset>
             <fieldset class="space-y-5">
                 <legend class="fieldset-title mb-5"><span class="step">4</span>Documents <span class="text-base font-normal text-ink-3">(optional, speeds things up)</span></legend>
