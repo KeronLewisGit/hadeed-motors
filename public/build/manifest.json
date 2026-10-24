@@ -1,0 +1,69 @@
+{
+  "_fonts-Ovjjsp3n.css": {
+    "file": "assets/fonts-Ovjjsp3n.css",
+    "src": "_fonts-Ovjjsp3n.css"
+  },
+  "_hanken-grotesk-400-normal-BG6hkEXj.woff2": {
+    "file": "assets/hanken-grotesk-400-normal-BG6hkEXj.woff2",
+    "src": "_hanken-grotesk-400-normal-BG6hkEXj.woff2"
+  },
+  "_hanken-grotesk-400-normal-CjyVwvJV.woff": {
+    "file": "assets/hanken-grotesk-400-normal-CjyVwvJV.woff",
+    "src": "_hanken-grotesk-400-normal-CjyVwvJV.woff"
+  },
+  "_hanken-grotesk-500-normal-Bo-NxEKf.woff": {
+    "file": "assets/hanken-grotesk-500-normal-Bo-NxEKf.woff",
+    "src": "_hanken-grotesk-500-normal-Bo-NxEKf.woff"
+  },
+  "_hanken-grotesk-500-normal-DrDcrrxK.woff2": {
+    "file": "assets/hanken-grotesk-500-normal-DrDcrrxK.woff2",
+    "src": "_hanken-grotesk-500-normal-DrDcrrxK.woff2"
+  },
+  "_hanken-grotesk-600-normal-CIXX6EOa.woff2": {
+    "file": "assets/hanken-grotesk-600-normal-CIXX6EOa.woff2",
+    "src": "_hanken-grotesk-600-normal-CIXX6EOa.woff2"
+  },
+  "_hanken-grotesk-600-normal-NEn2C4Q3.woff": {
+    "file": "assets/hanken-grotesk-600-normal-NEn2C4Q3.woff",
+    "src": "_hanken-grotesk-600-normal-NEn2C4Q3.woff"
+  },
+  "_hanken-grotesk-700-normal-6IGCzoPh.woff": {
+    "file": "assets/hanken-grotesk-700-normal-6IGCzoPh.woff",
+    "src": "_hanken-grotesk-700-normal-6IGCzoPh.woff"
+  },
+  "_hanken-grotesk-700-normal-CeQ8H3UY.woff2": {
+    "file": "assets/hanken-grotesk-700-normal-CeQ8H3UY.woff2",
+    "src": "_hanken-grotesk-700-normal-CeQ8H3UY.woff2"
+  },
+  "_unbounded-500-normal-4slEIF53.woff2": {
+    "file": "assets/unbounded-500-normal-4slEIF53.woff2",
+    "src": "_unbounded-500-normal-4slEIF53.woff2"
+  },
+  "_unbounded-500-normal-ZsrgWWU1.woff": {
+    "file": "assets/unbounded-500-normal-ZsrgWWU1.woff",
+    "src": "_unbounded-500-normal-ZsrgWWU1.woff"
+  },
+  "_unbounded-700-normal-CZtriu5h.woff": {
+    "file": "assets/unbounded-700-normal-CZtriu5h.woff",
+    "src": "_unbounded-700-normal-CZtriu5h.woff"
+  },
+  "_unbounded-700-normal-CaoNriVp.woff2": {
+    "file": "assets/unbounded-700-normal-CaoNriVp.woff2",
+    "src": "_unbounded-700-normal-CaoNriVp.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DQypGT2e.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-D890G7oV.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
