@@ -330,7 +330,7 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
   </div>
   <div class="meta">
     <div><b>Prepared for</b>Hadeed Motors Ltd<br>Hadeed Motors Complex, Old Parham Road<br>St John's, Antigua</div>
-    <div><b>Prepared by</b>Keron Lewis, Code Canvas Consultants Ltd<br>Port of Spain · codecanvastt.com<br>+1 868 466-CODE · keronlewis@live.com</div>
+    <div><b>Prepared by</b>Keron Lewis, Code Canvas Consultants Ltd<br>Port of Spain · codecanvastt.com<br>+1 868 466-CODE · info@codecanvastt.com</div>
   </div>
   <div class="ticks"></div>
 </section>
@@ -494,7 +494,7 @@ ${sec.screens.map((s) => screenPages(sec, s)).join('')}
   </ol>
   <div class="card" style="margin-top:18px; max-width:4.6in">
     <h3>Contact</h3>
-    <p style="margin:0">Keron Lewis, Director<br>Code Canvas Consultants Ltd, Port of Spain<br>codecanvastt.com · +1 868 466-CODE<br><a href="mailto:keronlewis@live.com">keronlewis@live.com</a></p>
+    <p style="margin:0">Keron Lewis, Director<br>Code Canvas Consultants Ltd, Port of Spain<br>codecanvastt.com · +1 868 466-CODE<br><a href="mailto:info@codecanvastt.com">info@codecanvastt.com<br>Book a call: calendly.com/keronlewis/30min</a></p>
   </div>
   <div style="margin-top:auto; margin-bottom:12px">${WORDMARK(false)}</div>
   ${foot()}
