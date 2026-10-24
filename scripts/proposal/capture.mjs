@@ -162,10 +162,13 @@ async function logout() {
 
 const shots = [];
 for (const [n, u] of [...PUBLIC, ...FLOWS]) shots.push(await shoot(n, u));
-shots.push(await shoot(...ADMIN_PAGES[0]));
+// Staff screens are captured at a 1280 × 1000 laptop size: their content is short, and the larger
+// type and taller frame fill a letter page instead of leaving its lower half blank.
+const DESK = { width: 1280, height: 1000 };
+shots.push(await shoot(...ADMIN_PAGES[0], DESK));
 for (const [n, u] of MOBILE.filter(([n]) => !n.startsWith('m-admin'))) shots.push(await shoot(n, u, { width: 390, height: 844, mobile: true, fullPage: false }));
 await login('admin@hadeed.test');
-for (const [n, u] of ADMIN_PAGES.slice(1)) shots.push(await shoot(n, u, { fullPage: !u.endsWith('/finance') }));
+for (const [n, u] of ADMIN_PAGES.slice(1)) shots.push(await shoot(n, u, { ...DESK, fullPage: !u.endsWith('/finance') }));
 for (const [n, u] of MOBILE.filter(([n]) => n.startsWith('m-admin'))) shots.push(await shoot(n, u, { width: 390, height: 844, mobile: true, fullPage: false }));
 await logout();
 // The finance role is the only one that can open ID and pay slips, so that view is captured as finance.

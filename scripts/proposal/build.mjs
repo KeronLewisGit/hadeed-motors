@@ -157,21 +157,51 @@ const FEATURES = [
 ];
 
 /**
- * Pack a screen's slices onto pages. A slice's height ÷ width is its share of a page; the first page
- * also carries the bullets. Every slice keeps its own caption; slices never break across pages.
+ * Pack a screen's slices onto pages. A slice's height ÷ width is its share of a page. Every slice keeps
+ * its own caption; slices never break across pages and keep their order. The layout is chosen by cost:
+ * one point per page, one more for a page left about a third empty, half a point for shrinking slices
+ * below 68% of a 1440px screen to share a page (never below 55%), and a quarter point for moving the
+ * bullets off the first page. So a short slice joins its neighbour instead of sitting alone on a
+ * half-blank page; ties go to the layout whose emptiest page is fullest.
  */
 function pages(c, hasBullets) {
   const sizes = c.sizes ?? c.chunks.map(() => [1440, 1440]);
   // Page capacity as image height ÷ text width: about 1.22 below the heading, 0.98 when bullets sit on top.
-  // Slices may share a page when they still read well scaled down to about 72% width.
-  const CAP = 0.08;
-  const out = []; let cur = null;
-  c.chunks.forEach((file, i) => {
-    const ratio = sizes[i][1] / sizes[i][0];
-    if (cur && (cur.sum + ratio) * 0.72 + CAP * (cur.items.length + 1) <= cur.budget) { cur.items.push(i); cur.sum += ratio; return; }
-    cur = { items: [i], sum: ratio, budget: out.length === 0 && hasBullets ? 0.98 : 1.22 }; out.push(cur);
-  });
-  return out.map((p) => ({ ...p, scale: Math.min(1, (p.budget - CAP * p.items.length) / p.sum) }));
+  // The estimate leaves out caption height, so a page counts as gappy at 25% estimated (about 35% printed).
+  const CAP = 0.08, GOOD_SCALE = 0.68, MIN_SCALE = 0.55, GAP = 0.25;
+  const ratios = sizes.map(([w, h]) => h / w);
+  const page = (from, to, bullets) => {
+    const budget = bullets ? 0.98 : 1.22;
+    const sum = ratios.slice(from, to).reduce((a, r) => a + r, 0);
+    const n = to - from;
+    const scale = Math.min(1, (budget - CAP * n) / sum);
+    const readable = scale * 1440 / sizes[from][0]; // narrower captures carry larger type
+    if (n > 1 && readable < MIN_SCALE) return null;
+    const empty = 1 - (sum * scale + CAP * n) / budget;
+    return { items: [...Array(n).keys()].map((k) => from + k), bullets, budget, scale, empty, cost: 1 + (empty > GAP ? 1 : 0) + (readable < GOOD_SCALE ? 0.5 : 0) + (bullets && from > 0 ? 0.25 : 0) };
+  };
+  // best(i, owed) = cheapest packing of slices i..end, where owed means the bullets still need a page.
+  const n = ratios.length;
+  const memo = new Map();
+  const best = (i, owed) => {
+    if (i === n) return owed ? null : { list: [], cost: 0, worst: 0 };
+    const key = i + ':' + owed;
+    if (memo.has(key)) return memo.get(key);
+    let pick = null;
+    for (const here of owed ? [true, false] : [false]) {
+      for (let j = i + 1; j <= n; j++) {
+        const pg = page(i, j, here);
+        if (!pg) break;
+        const rest = best(j, owed && !here);
+        if (!rest) continue;
+        const cand = { list: [pg, ...rest.list], cost: pg.cost + rest.cost, worst: Math.max(pg.empty, rest.worst) };
+        if (!pick || cand.cost < pick.cost - 1e-9 || (Math.abs(cand.cost - pick.cost) < 1e-9 && cand.worst < pick.worst - 1e-9)) pick = cand;
+      }
+    }
+    memo.set(key, pick);
+    return pick;
+  };
+  return best(0, hasBullets).list;
 }
 
 function caption(key, i, c) {
@@ -190,13 +220,14 @@ function screenPages(sec, [key, title, bullets]) {
         <div><p class="eyebrow">${esc(sec.title)}${pi ? ' · continued' : ''}</p><h2>${esc(title)}</h2></div>
         <p class="url">${esc(c.url)}</p>
       </header>
-      ${pi === 0 ? `<ul class="bullets">${bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
+      ${p.bullets ? `<ul class="bullets">${bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
       ${p.items.map((i) => `<figure><img style="width:${(p.scale * 100).toFixed(1)}%" src="${img(c.chunks[i])}" alt="${esc(title)}">${caption(key, i, c)}</figure>`).join('')}
       ${foot()}
     </section>`).join('');
 }
 
 const foot = () => `<footer class="foot"><span class="fl">${MARK(16, '#d5d9de')}Hadeed Motors · Website proposal</span><span>Code Canvas Consultants Ltd · ${esc(DATE)}</span></footer>`;
+const notes = (list) => `<div class="phone-notes">${list.map(([t, d]) => `<div><b>${esc(t)}</b>${esc(d)}</div>`).join('')}</div>`;
 const phones = (list) => `<div class="phones">${list.map(([k, c]) => `<figure><img src="${img(chunks[k].chunks[0])}" alt="${esc(c)}"><figcaption>${esc(c)}</figcaption></figure>`).join('')}</div>`;
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Hadeed Motors – Website Proposal</title>
@@ -269,6 +300,9 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
   .phones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 12px; }
   .phones figure { margin: 0; }
   .phones img { width: 100%; border-radius: 22px; border: 7px solid var(--graphite); }
+  .phone-notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 14px; }
+  .phone-notes div { background: var(--bg); border-radius: 10px; padding: 9px 12px; font-size: 9pt; color: var(--ink-2); }
+  .phone-notes b { display: block; color: var(--ink); font-size: 9.5pt; margin-bottom: 2px; }
   .phones figcaption { text-align: center; font-size: 9pt; color: var(--ink-2); margin-top: 6px; font-weight: 600; }
   /* investment */
   .price { display: grid; grid-template-columns: 1.45fr 1fr; gap: 14px; align-items: stretch; margin: 6px 0 4px; }
@@ -355,12 +389,14 @@ ${sec.screens.map((s) => screenPages(sec, s)).join('')}
   <header class="shot-head"><div><p class="eyebrow">Responsive design</p><h2>Built for phones first</h2></div><p class="url">390 × 844</p></header>
   <p style="margin:0 0 4px">Most customers will find Hadeed Motors on a phone. Every page adapts to a small screen, and a bar with Call and Test drive stays within thumb reach (WhatsApp is added once you have a WhatsApp number).</p>
   ${phones([['m-home', 'Home'], ['m-vehicle', 'Pre-owned vehicle'], ['m-service', 'Service booking']])}
+  ${notes([['Thumb-sized buttons', 'Every button is at least 48 pixels tall, and a Call button stays at the foot of the screen while browsing.'], ['The right keyboard', 'Phone, mileage and year fields open the number pad; contact fields fill in from the phone\'s saved details.'], ['Light on data', 'Photos are served as WebP in three sizes, so a phone downloads the small one.']])}
   ${foot()}
 </section>
 <section class="page">
   <header class="shot-head"><div><p class="eyebrow">Responsive design · continued</p><h2>Requests and the sales desk on a phone</h2></div><p class="url">390 × 844</p></header>
   <p style="margin:0 0 4px">Consultants can check the call queue and call a customer back from the showroom floor, not only from a desk.</p>
   ${phones([['m-test-drive', 'Test-drive booking'], ['m-admin-dashboard', 'Sales desk overview'], ['m-admin-lead', 'Lead, one-tap call']])}
+  ${notes([['Live slots', 'Only test-drive times and workshop days with space left can be picked.'], ['Overdue first', 'The overview opens on the leads that have waited more than two hours for a call.'], ['One tap to reply', 'Call, WhatsApp or email the customer straight from the lead.']])}
   ${foot()}
 </section>
 
