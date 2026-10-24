@@ -130,7 +130,7 @@ async function shoot(name, url, { width = 1440, height = 900, fullPage = true, m
     const hash = new URL(BASE + url).hash;
     if (hash) { await page.evaluate((h) => document.querySelector(h)?.scrollIntoView(), hash); await new Promise(r => setTimeout(r, 300)); }
     const file = path.join(OUT, `${name}.jpg`);
-    await page.screenshot({ path: file, type: 'jpeg', quality: 80 });
+    await page.screenshot({ path: file, type: 'jpeg', quality: 72 });
     files.push(file);
     console.log(`✓ ${name} viewport`);
     return { name, url, chunks: files.map(f => path.resolve(f)), labels: [[]], sizes: [[width, height]], mobile };
@@ -141,7 +141,7 @@ async function shoot(name, url, { width = 1440, height = 900, fullPage = true, m
   const groups = packBlocks(blocks, maxH, docH);
   for (const [i, g] of groups.entries()) {
     const file = path.join(OUT, groups.length > 1 ? `${name}-${i}.jpg` : `${name}.jpg`);
-    await page.screenshot({ path: file, type: 'jpeg', quality: 80, captureBeyondViewport: true, clip: { x: 0, y: g.top, width, height: g.bottom - g.top } });
+    await page.screenshot({ path: file, type: 'jpeg', quality: 72, captureBeyondViewport: true, clip: { x: 0, y: g.top, width, height: g.bottom - g.top } });
     files.push(file); labels.push(g.labels ?? []);
   }
   console.log(`✓ ${name} → ${groups.length} slice(s): ${groups.map(g => (g.labels ?? []).join(' | ') || '(no heading)').join('  ·  ')}`);
