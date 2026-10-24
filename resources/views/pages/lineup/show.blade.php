@@ -42,7 +42,9 @@
             <x-spec class="mt-4" :rows="['Brand' => $brandName, 'Body' => $m['body']] + $m['specs'] + ['Price' => 'Call for today\'s price']" />
             <div class="mt-6 grid gap-3">
                 <a href="{{ tel_href(hadeed('phone')) }}" class="btn btn-primary"><x-icon name="phone" class="h-4 w-4" />Call sales: {{ format_phone(hadeed('phone')) }}</a>
-                <a href="{{ wa_href(null, 'Hello, I am interested in the '.$full.'.') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />Ask on WhatsApp</a>
+                @if (hadeed('whatsapp'))
+                    <a href="{{ wa_href(null, 'Hello, I am interested in the '.$full.'.') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />Ask on WhatsApp</a>
+                @endif
             </div>
         </aside>
     </section>

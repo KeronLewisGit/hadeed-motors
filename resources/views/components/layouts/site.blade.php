@@ -21,7 +21,7 @@
         'telephone' => '+'.us_digits($phone),
         'email' => $email,
         'foundingDate' => (string) hadeed('founded'),
-        'logo' => asset('favicon.svg'),
+        'logo' => asset('img/brand/hadeed-hm.png'),
         'image' => asset('img/showroom-1920.webp'),
         'brand' => [['@type' => 'Brand', 'name' => 'Nissan'], ['@type' => 'Brand', 'name' => 'Suzuki']],
         'address' => [
@@ -165,11 +165,13 @@
     </footer>
 
     @if ($mobileBar)
-        {{-- Thumb-reach actions on phones: call, WhatsApp, test drive --}}
+        {{-- Thumb-reach actions on phones: call, WhatsApp (when configured), test drive --}}
         <nav aria-label="Quick actions" class="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-graphite-900/95 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
             <div class="flex gap-2">
                 <a href="{{ tel_href($phone) }}" class="btn btn-on-dark flex-1 px-2 text-[0.9375rem]"><x-icon name="phone" class="h-4 w-4" />Call</a>
-                <a href="{{ wa_href(null, 'Hello Hadeed Motors, I have a question.') }}" class="btn btn-on-dark flex-1 px-2 text-[0.9375rem]" rel="noopener" target="_blank"><x-icon name="whatsapp" class="h-4 w-4" />WhatsApp</a>
+                @if (hadeed('whatsapp'))
+                    <a href="{{ wa_href(null, 'Hello Hadeed Motors, I have a question.') }}" class="btn btn-on-dark flex-1 px-2 text-[0.9375rem]" rel="noopener" target="_blank"><x-icon name="whatsapp" class="h-4 w-4" />WhatsApp</a>
+                @endif
                 <a href="{{ $tdUrl }}" class="btn btn-accent flex-[1.4] whitespace-nowrap px-2 text-[0.9375rem]">Test drive</a>
             </div>
         </nav>

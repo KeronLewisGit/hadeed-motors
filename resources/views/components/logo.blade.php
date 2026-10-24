@@ -1,15 +1,14 @@
 @props(['tone' => 'auto', 'compact' => false, 'small' => false])
 {{--
-    The HM monogram in the dealership's own red and blue (sampled from the logo on
-    hadeedmotors.com), set on a white plate so it reads on graphite and on white.
-    Swap for the original artwork when the client supplies it.
+    Hadeed Motors' own HM mark, the file the dealership uses on hadeedmotors.com
+    (public/img/brand/hadeed-hm.png). It is red and blue on transparent, so it
+    sits on a white plate to stay legible on the graphite header, footer and in
+    dark mode.
 --}}
 <span {{ $attributes->merge(['class' => 'inline-flex items-center gap-2.5']) }}>
-    <svg viewBox="0 0 52 34" class="h-8 w-auto flex-none min-[400px]:h-9" aria-hidden="true">
-        <rect x="0.75" y="0.75" width="50.5" height="32.5" rx="5" fill="#fff" stroke="{{ $tone === 'light' ? 'rgb(255 255 255 / .35)' : 'var(--line-strong)' }}" stroke-width="1.5"/>
-        <path fill="var(--hm-red)" d="M7 8h5.6v6.7h6.2V8h5.6v18h-5.6v-6.6h-6.2V26H7z"/>
-        <path fill="var(--hm-blue)" d="M26.6 8h5.7l3.5 8.4L39.3 8H45v18h-5.3V16.6l-2.6 6.3h-2.6l-2.6-6.3V26h-5.3z"/>
-    </svg>
+    <span class="flex h-8 flex-none items-center rounded-[5px] bg-white px-[7px] ring-1 ring-inset min-[400px]:h-9 {{ $tone === 'light' ? 'ring-white/35' : 'ring-line-strong' }}">
+        <img src="{{ asset('img/brand/hadeed-hm.png') }}" width="123" height="58" alt="" class="h-[19px] w-auto min-[400px]:h-[22px]">
+    </span>
     @unless ($compact)
         <span class="leading-none {{ $tone === 'light' ? 'text-white' : 'text-ink' }}">
             <span class="font-display block whitespace-nowrap font-bold tracking-[-0.02em] {{ $small ? 'text-[0.95rem]' : 'text-[1.05rem] min-[400px]:text-[1.2rem]' }}">Hadeed Motors</span>

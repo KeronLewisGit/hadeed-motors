@@ -18,7 +18,9 @@
                 ]" />
                 <div class="mt-6 flex flex-col gap-3 sm:flex-row">
                     <a href="{{ tel_href(hadeed('phone')) }}" class="btn btn-primary"><x-icon name="phone" class="h-4 w-4" />Call {{ format_phone(hadeed('phone')) }}</a>
-                    <a href="{{ wa_href(null, 'Hello Hadeed Motors') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />WhatsApp</a>
+                    @if (hadeed('whatsapp'))
+                        <a href="{{ wa_href(null, 'Hello Hadeed Motors') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />WhatsApp</a>
+                    @endif
                 </div>
             </section>
             <section aria-labelledby="hours-title">
@@ -27,7 +29,7 @@
             </section>
             <section aria-labelledby="addr-title">
                 <h2 id="addr-title" class="display-3">Find us</h2>
-                <address class="mt-4 not-italic text-ink-2">{{ $address['building'] }}<br>{{ $address['street'] }}, {{ $address['area'] }}<br>{{ $address['city'] }}, {{ $address['country'] }}</address>
+                <address class="mt-4 not-italic text-ink-2">{{ $address['building'] }}<br>{{ $address['street'] }}<br>{{ $address['city'] }}, {{ $address['country'] }}</address>
                 <a href="{{ hadeed('map_url') }}" class="btn btn-outline mt-5" target="_blank" rel="noopener"><x-icon name="map-pin" class="h-4 w-4" />Open in Google Maps</a>
             </section>
         </div>

@@ -11,7 +11,7 @@ const chunks = JSON.parse(fs.readFileSync(path.join(SHOTS, 'chunks.json'), 'utf8
 const OUT_HTML = path.resolve('dist/proposal/proposal.html');
 const OUT_PDF = path.resolve('dist/proposal/Hadeed-Motors-Website-Proposal.pdf');
 const DATE = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-const TESTS = process.env.TEST_COUNT ?? '63';
+const TESTS = process.env.TEST_COUNT ?? '65';
 const img = (f) => 'file://' + f;
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
@@ -28,9 +28,11 @@ const FONTS = [
   ['Hanken Grotesk', 600, 'hanken-grotesk-600-normal'], ['Hanken Grotesk', 700, 'hanken-grotesk-700-normal'],
 ].map(([fam, w, p]) => `@font-face { font-family: "${fam}"; font-weight: ${w}; font-style: normal; src: url("${font(p)}") format("woff2"); }`).join('\n');
 
-// The HM mark exactly as the site draws it (resources/views/components/logo.blade.php).
-const MARK = (h = 34) => `<svg viewBox="0 0 52 34" height="${h}" width="${Math.round(h * 52 / 34)}" aria-hidden="true"><rect x="0.75" y="0.75" width="50.5" height="32.5" rx="5" fill="#fff" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/><path fill="#ec1a24" d="M7 8h5.6v6.7h6.2V8h5.6v18h-5.6v-6.6h-6.2V26H7z"/><path fill="#3553a1" d="M26.6 8h5.7l3.5 8.4L39.3 8H45v18h-5.3V16.6l-2.6 6.3h-2.6l-2.6-6.3V26h-5.3z"/></svg>`;
-const WORDMARK = (dark = true) => `<div class="brand">${MARK(dark ? 40 : 30)}<div><span class="n ${dark ? '' : 'ink'}">Hadeed Motors</span><span class="s ${dark ? '' : 'ink'}">St John's · Since 1972</span></div></div>`;
+// Hadeed Motors' own HM mark (the file hadeedmotors.com uses, kept in public/img/brand), on the
+// same white plate the site puts it on.
+const LOGO = 'data:image/png;base64,' + fs.readFileSync(path.join(ROOT, 'public/img/brand/hadeed-hm.png')).toString('base64');
+const MARK = (h = 34, ring = 'rgba(255,255,255,.35)') => `<span class="mark" style="height:${h}px; padding:0 ${Math.round(h * 0.2)}px; box-shadow: inset 0 0 0 1px ${ring}"><img src="${LOGO}" alt="" style="height:${Math.round(h * 0.6)}px"></span>`;
+const WORDMARK = (dark = true) => `<div class="brand">${MARK(dark ? 40 : 30, dark ? 'rgba(255,255,255,.35)' : '#8a939d')}<div><span class="n ${dark ? '' : 'ink'}">Hadeed Motors</span><span class="s ${dark ? '' : 'ink'}">St John's · Since 1972</span></div></div>`;
 const plate = (code, label, dark = false) => `<p class="plate ${dark ? 'dark' : ''}"><span class="c">${esc(code)}</span><span class="l">${esc(label)}</span></p>`;
 
 /** Hand-written captions per slice (key = screen name, index = slice number), from what each slice shows. */
@@ -50,14 +52,14 @@ const CAPTIONS = {
     'Closing call to action: book a test drive to compare two models.',
   ],
   model: [
-    'A model page (Suzuki Jimny): breadcrumb, test-drive and pre-qualify buttons, overview, gallery and an "at a glance" spec sheet with call and WhatsApp buttons.',
+    'A model page (Suzuki Jimny): breadcrumb, test-drive and pre-qualify buttons, overview, gallery and an "at a glance" spec sheet with a call button (a WhatsApp button appears once you give us a WhatsApp number).',
     'Trims with their features from Hadeed Motors\' own model pages, then "on the lot now", which lists new units entered in the inventory (a sample unit here).',
     'More models from the same brand.',
   ],
   inventory: ['Pre-owned stock with filters for make, body type, price, year and transmission, and sorting. It works with or without JavaScript. All six cars are sample listings.'],
   vehicle: [
     'Vehicle page header: stock number, breadcrumb, availability and the sample-listing badge.',
-    'Photo gallery with arrows and thumbnails, odometer readout, full spec sheet, test-drive, call and WhatsApp buttons, and a finance panel.',
+    'Photo gallery with arrows and thumbnails, odometer readout, full spec sheet, test-drive and call buttons, and a finance panel.',
     'Similar vehicles by body type or make.',
   ],
   finance: [
@@ -115,11 +117,11 @@ const CAPTIONS = {
 /** Screen definitions: section, key, title, bullets. */
 const SECTIONS = [
   { id: 'public', eyebrow: 'Part 1', code: '01', title: 'The public website', intro: 'A new hadeedmotors.com on valid HTTPS, written from the facts on the current site, hadeedmotors.com\'s own model pages and FDC\'s published requirements. Every page works on a phone, and every inner page opens with the same graphite header.', screens: [
-    ['home', 'Home page', ['Hadeed Motors\' own showroom photograph, the dealership\'s history since 1972, and the line-up, pre-owned stock, finance and service in one scroll.', 'Six shortcuts ("I\'d like to…") lead straight to the request forms that the current site\'s menu points to.', 'A phone bar with Call, WhatsApp and Test drive follows visitors on every page.']],
+    ['home', 'Home page', ['Hadeed Motors\' own showroom photograph, the dealership\'s history since 1972, and the line-up, pre-owned stock, finance and service in one scroll.', 'Six shortcuts ("I\'d like to…") lead straight to the request forms that the current site\'s menu points to.', 'On phones, a bar with Call and Test drive follows visitors on every page (WhatsApp joins it once you have a WhatsApp number).']],
     ['lineup', 'New vehicles', ['Every Nissan and Suzuki model sold new, filterable by brand.', 'Old links such as index.html?page=vehicle&model=jimny redirect to the matching new page, so bookmarks and search results keep working.']],
     ['model', 'Model page', ['Trims and features, spec sheet and gallery for each model.', 'New stock entered in the back office appears automatically under "on the lot now".', 'No prices are shown for new models: "Call for today\'s price", as the line-up changes by shipment.']],
     ['inventory', 'Pre-owned stock', ['Filters and sorting for make, body type, price, year and transmission, all searchable by Google.', 'Reserved cars are badged, and sold cars stay listed as Sold for 7 days, then drop off.']],
-    ['vehicle', 'Vehicle page', ['Multi-photo gallery, odometer, full spec sheet and three ways to act: test drive, call or WhatsApp.', 'A monthly estimate appears automatically once FDC publishes an indicative rate.']],
+    ['vehicle', 'Vehicle page', ['Multi-photo gallery, odometer, full spec sheet and clear ways to act: book a test drive or call.', 'A monthly estimate appears automatically once FDC publishes an indicative rate.']],
     ['finance', 'Finance with FDC', ['Explains the FDC process and the documents to bring.', 'An estimator that gives the same figure with or without JavaScript, hidden until a rate is published.']],
     ['service', 'Service and online booking', ['Customers see which days have space and claim a drop-off place. The daily capacity is set by the workshop.', 'Weekends and public holidays are never offered.']],
     ['about', 'About Hadeed Motors', ['The 1972 story, the founding philosophy and the milestones, from the current site.']],
@@ -194,7 +196,7 @@ function screenPages(sec, [key, title, bullets]) {
     </section>`).join('');
 }
 
-const foot = () => `<footer class="foot"><span>Hadeed Motors · Website proposal</span><span>Code Canvas Consultants Ltd · ${esc(DATE)}</span></footer>`;
+const foot = () => `<footer class="foot"><span class="fl">${MARK(16, '#d5d9de')}Hadeed Motors · Website proposal</span><span>Code Canvas Consultants Ltd · ${esc(DATE)}</span></footer>`;
 const phones = (list) => `<div class="phones">${list.map(([k, c]) => `<figure><img src="${img(chunks[k].chunks[0])}" alt="${esc(c)}"><figcaption>${esc(c)}</figcaption></figure>`).join('')}</div>`;
 
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Hadeed Motors – Website Proposal</title>
@@ -227,6 +229,7 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
   .cover .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; border-top: 1px solid rgba(255,255,255,.18); padding-top: 16px; font-size: 9.5pt; color: rgba(255,255,255,.8); }
   .cover .meta b { display: block; color: #fff; font-size: 9pt; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 4px; }
   .brand { display: flex; align-items: center; gap: 10px; } .brand .n { display: block; font-family: "Unbounded"; font-weight: 700; font-size: 17pt; color: #fff; line-height: 1; letter-spacing: -0.02em; } .brand .s { display: block; margin-top: 4px; font-size: 7pt; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+  .mark { display: inline-flex; align-items: center; flex: none; background: #fff; border-radius: 5px; } .mark img { display: block; width: auto; }
   .brand .ink { color: var(--ink); } .brand .s.ink { color: var(--ink-3); }
   .divider { justify-content: center; }
   .divider h1 { font-size: 38pt; margin: 6px 0 18px; } .divider p.intro { color: rgba(255,255,255,.85); font-size: 12.5pt; max-width: 6in; margin: 0; }
@@ -242,7 +245,7 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
   .card { border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: #fff; break-inside: avoid; }
   .card h3 { margin-bottom: 5px; }
   .card ul { margin: 0; padding-left: 15px; } .card li { margin: 2px 0; font-size: 9.6pt; }
-  .evidence { border-left: 4px solid var(--coral); background: var(--bg); border-radius: 0 10px 10px 0; padding: 10px 14px; margin: 8px 0 10px; }
+  .evidence { border-left: 4px solid var(--coral); background: var(--bg); border-radius: 0 10px 10px 0; padding: 10px 14px 10px 30px; margin: 8px 0 10px; }
   .evidence li { margin: 3px 0; }
   .src { font-size: 8pt; color: var(--ink-3); }
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 6px; }
@@ -281,7 +284,7 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
   .week { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; background: #fff; }
   .week b { display: inline-block; font-family: "Unbounded"; font-weight: 500; font-size: 8.5pt; background: var(--ink); color: var(--bg); border-radius: 4px; padding: 3px 6px; margin-bottom: 5px; }
   .week p { margin: 0; font-size: 9.5pt; }
-  footer.foot { margin-top: auto; padding-top: 6px; font-size: 7.8pt; color: #8a939d; display: flex; justify-content: space-between; border-top: 1px solid var(--line); }
+  footer.foot { margin-top: auto; padding-top: 6px; font-size: 7.8pt; color: #8a939d; display: flex; justify-content: space-between; border-top: 1px solid var(--line); align-items: center; } footer.foot .fl { display: inline-flex; align-items: center; gap: 6px; }
 </style></head><body>
 
 <section class="page dark-page cover">
@@ -292,7 +295,7 @@ const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>
     <p class="lead">A complete rebuild of hadeedmotors.com on valid HTTPS, with online test-drive, service, parts, trade-in and finance requests feeding one sales desk for sales, service and FDC.</p>
   </div>
   <div class="meta">
-    <div><b>Prepared for</b>Hadeed Motors Ltd<br>Old Parham Road, Cassada Gardens<br>St John's, Antigua</div>
+    <div><b>Prepared for</b>Hadeed Motors Ltd<br>Hadeed Motors Complex, Old Parham Road<br>St John's, Antigua</div>
     <div><b>Prepared by</b>Keron Lewis, Code Canvas Consultants Ltd<br>Port of Spain · codecanvastt.com<br>+1 868 466-CODE · keronlewis@live.com</div>
   </div>
   <div class="ticks"></div>
@@ -350,7 +353,7 @@ ${sec.screens.map((s) => screenPages(sec, s)).join('')}
 
 <section class="page">
   <header class="shot-head"><div><p class="eyebrow">Responsive design</p><h2>Built for phones first</h2></div><p class="url">390 × 844</p></header>
-  <p style="margin:0 0 4px">Most customers will find Hadeed Motors on a phone. Every page adapts to a small screen, and a bar with Call, WhatsApp and Test drive stays within thumb reach.</p>
+  <p style="margin:0 0 4px">Most customers will find Hadeed Motors on a phone. Every page adapts to a small screen, and a bar with Call and Test drive stays within thumb reach (WhatsApp is added once you have a WhatsApp number).</p>
   ${phones([['m-home', 'Home'], ['m-vehicle', 'Pre-owned vehicle'], ['m-service', 'Service booking']])}
   ${foot()}
 </section>
@@ -432,7 +435,7 @@ ${sec.screens.map((s) => screenPages(sec, s)).join('')}
   </div>
   <h2>What we need from Hadeed Motors</h2>
   <ul class="plain">
-    <li>The original logo artwork (the demo uses a close redraw of the HM mark) and any brand guidelines.</li>
+    <li>Your logo as a vector file (the demo uses the HM mark from hadeedmotors.com, which is only 123 pixels wide) and any brand guidelines.</li>
     <li>Photos of the showroom, team and current stock, or time for a short photo session.</li>
     <li>The stock list with prices you are happy to publish, and confirmation of opening hours, public holidays and daily workshop capacity.</li>
     <li>FDC's confirmation of the documents list and, if they wish, an indicative rate for the estimator.</li>

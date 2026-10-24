@@ -14,18 +14,20 @@ return [
     'founded' => 1972,
     'preview' => (bool) env('HADEED_PREVIEW', false),
     'phone' => env('HADEED_PHONE', '268-481-2500'),
-    // WhatsApp number (digits or any format). Falls back to the main line when not set.
-    'whatsapp' => env('HADEED_WHATSAPP') ?: env('HADEED_PHONE', '268-481-2500'),
+    // Main line, parts and service all use 481-2500 (hadeedmotors.com contact block,
+    // checked 24 Oct 2026). The dealership publishes no WhatsApp number, so the
+    // "WhatsApp us" buttons stay hidden until HADEED_WHATSAPP is set.
+    'whatsapp' => env('HADEED_WHATSAPP') ?: null,
     'email' => env('HADEED_EMAIL', 'info@hadeedmotors.com'),
     'notify' => env('HADEED_NOTIFY_EMAIL', ''),
     'currency' => 'EC$',
     // EC$ is pegged at 2.70 to the US dollar; used only for the "about US$" hint.
     'usd_rate' => 2.70,
 
+    // As the dealership writes it on hadeedmotors.com.
     'address' => [
         'building' => 'Hadeed Motors Complex',
         'street' => 'Old Parham Road',
-        'area' => 'Cassada Gardens',
         'city' => "St John's",
         'country' => 'Antigua and Barbuda',
         'country_code' => 'AG',

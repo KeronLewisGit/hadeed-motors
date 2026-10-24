@@ -92,7 +92,9 @@
                         <a href="{{ route('test-drive', ['vehicle' => $vehicle->slug]) }}" class="btn btn-accent">Book a test drive<x-icon name="arrow-right" class="nudge h-4 w-4" /></a>
                     @endif
                     <a href="{{ tel_href(hadeed('phone')) }}" class="btn btn-primary"><x-icon name="phone" class="h-4 w-4" />Call {{ format_phone(hadeed('phone')) }}</a>
-                    <a href="{{ wa_href(null, 'Hello, is the '.$title.' ('.route('inventory.show', $vehicle).') still available?') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />Ask on WhatsApp</a>
+                    @if (hadeed('whatsapp'))
+                        <a href="{{ wa_href(null, 'Hello, is the '.$title.' ('.route('inventory.show', $vehicle).') still available?') }}" class="btn btn-outline" target="_blank" rel="noopener"><x-icon name="whatsapp" class="h-4 w-4" />Ask on WhatsApp</a>
+                    @endif
                 </div>
             </div>
 

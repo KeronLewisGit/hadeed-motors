@@ -192,4 +192,21 @@ class PublicSiteTest extends TestCase
     {
         $this->get('/')->assertSee('Hadeed Motors Ltd. Nissan and Suzuki')->assertDontSee('Ltd..');
     }
+
+    public function test_whatsapp_buttons_only_show_when_the_dealership_has_a_number(): void
+    {
+        config(['hadeed.whatsapp' => null]);
+        foreach (['/', '/contact', '/new/suzuki/jimny'] as $url) {
+            $this->get($url)->assertOk()->assertDontSee('wa.me/', false);
+        }
+
+        config(['hadeed.whatsapp' => '268-555-0100']);
+        $this->get('/contact')->assertSee('https://wa.me/12685550100', false);
+    }
+
+    public function test_logo_is_the_dealerships_own_artwork(): void
+    {
+        $this->assertFileExists(public_path('img/brand/hadeed-hm.png'));
+        $this->get('/')->assertSee('img/brand/hadeed-hm.png', false)->assertSee('apple-touch-icon', false);
+    }
 }
