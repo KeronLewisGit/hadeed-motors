@@ -1,6 +1,6 @@
 <x-layouts.admin title="Staff">
     <div class="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-        <div class="a-card overflow-x-auto">
+        <div class="a-card relative overflow-x-auto">
             <table class="data-table">
                 <thead><tr><th>Name</th><th>Role</th><th>Sees</th><th>Active</th><th><span class="sr-only">Save</span></th></tr></thead>
                 <tbody>

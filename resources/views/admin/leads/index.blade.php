@@ -26,7 +26,7 @@
         @if (array_filter($filters))<a href="{{ route('admin.leads.index') }}" class="a-btn a-btn-ghost">Clear</a>@endif
     </form>
 
-    <div class="a-card mt-5 overflow-x-auto">
+    <div class="a-card relative mt-5 overflow-x-auto">
         <table class="data-table">
             <thead><tr><th>Received</th><th>Customer</th><th>Type</th><th>Vehicle</th><th>Appointment</th><th>Status</th><th>Assigned</th></tr></thead>
             <tbody>

@@ -7,7 +7,7 @@
 </head>
 <body class="admin grid min-h-screen place-items-center bg-graphite-950 px-4 py-10">
     <main class="w-full max-w-sm">
-        <a href="{{ route('home') }}" class="mx-auto mb-8 flex w-max"><x-logo tone="light" /></a>
+        <a href="{{ route('home') }}" class="mx-auto mb-8 flex min-h-11 w-max items-center"><x-logo tone="light" /></a>
         <form method="POST" action="{{ route('login') }}" class="a-card space-y-5 p-6 sm:p-8">
             @csrf
             <div>

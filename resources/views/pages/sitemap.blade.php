@@ -15,7 +15,7 @@
         @foreach (hadeed('brands') as $bk => $b)
             <div>
                 <h2 class="text-lg font-bold font-sans">New {{ $b['name'] }}</h2>
-                <ul class="mt-3 space-y-1">@foreach (\App\Support\Lineup::all($bk) as $k => $m)<li><a class="text-link inline-flex min-h-11 items-center" href="{{ route('lineup.show', [$bk, $k]) }}">{{ $m['name'] }}</a></li>@endforeach</ul>
+                <ul class="mt-3 space-y-1">@foreach (\App\Support\Lineup::all($bk) as $k => $m)<li><a class="text-link inline-flex min-h-11 min-w-11 items-center" href="{{ route('lineup.show', [$bk, $k]) }}">{{ $m['name'] }}</a></li>@endforeach</ul>
             </div>
         @endforeach
         @if ($stock->isNotEmpty())

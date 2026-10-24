@@ -10,7 +10,7 @@
         <button class="a-btn a-btn-ghost">Filter</button>
     </form>
 
-    <div class="a-card mt-5 overflow-x-auto">
+    <div class="a-card relative mt-5 overflow-x-auto">
         <table class="data-table">
             <thead><tr><th>Vehicle</th><th>Stock no.</th><th class="r">Odometer</th><th class="r">Price</th><th>Photos</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead>
             <tbody>
@@ -19,19 +19,19 @@
                         <td>
                             <div class="flex items-center gap-3">
                                 @if ($v->photoUrl())<img src="{{ $v->photoUrl() }}" alt="" class="h-11 w-16 flex-none rounded object-cover">@else<span class="grid h-11 w-16 flex-none place-items-center rounded bg-surface-2"><x-icon name="car" class="h-5 w-5 text-ink-3" /></span>@endif
-                                <div><a href="{{ route('admin.vehicles.edit', $v) }}" class="font-semibold hover:underline">{{ $v->title }}</a>
+                                <div class="min-w-44"><a href="{{ route('admin.vehicles.edit', $v) }}" class="font-semibold hover:underline">{{ $v->title }}</a>
                                     <p class="text-xs text-ink-3">{{ $v->condition->label() }}@if($v->featured) · Featured @endif @if(! $v->published) · Hidden @endif @if($v->is_demo) · Sample @endif</p></div>
                             </div>
                         </td>
-                        <td class="num">{{ $v->stock_no ?? '—' }}</td>
-                        <td class="r">{{ $v->mileage_km !== null ? number_format($v->mileage_km).' km' : '—' }}</td>
-                        <td class="r">{{ $v->priceLabel() }}</td>
+                        <td class="num whitespace-nowrap">{{ $v->stock_no ?? '—' }}</td>
+                        <td class="r whitespace-nowrap">{{ $v->mileage_km !== null ? number_format($v->mileage_km).' km' : '—' }}</td>
+                        <td class="r whitespace-nowrap">{{ $v->priceLabel() }}</td>
                         <td class="num">{{ $v->photos_count }}</td>
                         <td>
                             <form method="POST" action="{{ route('admin.vehicles.status', $v) }}" x-data @change="$el.requestSubmit()">
                                 @csrf @method('PATCH')
                                 <label class="sr-only" for="vs-{{ $v->id }}">Status of {{ $v->title }}</label>
-                                <select id="vs-{{ $v->id }}" name="status" class="a-input !min-h-9 !py-1 text-sm">@foreach (\App\Enums\VehicleStatus::cases() as $s)<option value="{{ $s->value }}" @selected($v->status === $s)>{{ $s->label() }}</option>@endforeach</select>
+                                <select id="vs-{{ $v->id }}" name="status" class="a-input !py-1 text-sm sm:!min-h-9">@foreach (\App\Enums\VehicleStatus::cases() as $s)<option value="{{ $s->value }}" @selected($v->status === $s)>{{ $s->label() }}</option>@endforeach</select>
                                 <noscript><button class="a-btn a-btn-ghost !min-h-9">Set</button></noscript>
                             </form>
                         </td>
